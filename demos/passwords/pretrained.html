@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisty Debug</title>
+
+    <style>
+        input {
+            width: 50%;
+        }
+
+        body {
+            background: #111;
+            color: cornflowerblue;
+            font-family: Montserrat, Verdana, Geneva, Tahoma, sans-serif;
+            padding-left: 25vw;
+            padding-right: 25vw;
+        }
+
+        ul {
+            padding-right: 40px;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        li strong {
+            text-align: right;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
+    <script src="../../dist/wisty.umd.js"></script>
+
+    <ul id="chat"></ul>
+    <input type="text" id="in"/>
+    <button id="valin">Send</button>
+    <button id="reset">Reset</button>
+    
+    <script>
+        function addMessage(message, user=false) {
+            document.getElementById('chat').innerHTML += `
+                <li>
+                    ${user ? '<strong>' : ''}
+                    ${message}
+                    ${user ? '</strong>' : ''}
+                </li>
+            `;
+        }
+
+        function getMessage() {
+            return document.getElementById('in').value;
+        }
+
+        const messages = {
+            'introduce': "I'm your account helper. I can help you log into your account if your encountering troubles.",
+            'sayHello': "Hi",
+            'solved': "Happy that your issue is now solved !",
+            'sayGoodbye': "Goodbye",
+            'checkSpell': "Check if your password was well spelled, or that caps-lock/num-lock were correctly set. Does it solve it ?",
+            'resetPassword': "Alright, I just sent you an e-mail to reset your password. Follow the instruction in the message. Tell me if it solves it.",
+            'retryReset': "E-Mail can sometimes fail, let's try again...",
+            'checkResetCodeSpell': "Make sure the reset code you entered was the same that the one in the e-mail.",
+            'callSupport': "Alright, I will put you in relation with our support, they will help you solve this.",
+        }
+
+        const USEFeaturizer = new wisty.USE();
+        const BOWFeaturizer = new wisty.BOW(50);
+
+        const bot = new wisty.HCN([
+            'introduce',
+            'sayHello',
+            'solved',
+            'sayGoodbye',
+            'checkSpell',
+            'resetPassword',
+            'retryReset',
+            'checkResetCodeSpell',
+            'callSupport',
+            'LUS'
+        ], [USEFeaturizer, BOWFeaturizer], 16);
+
+        USEFeaturizer.init().then(() => {
+            addMessage("Featurizer loaded.");
+            
+            fetch('weights.json').then((r) => {
+                r.text().then((json) => {
+                    bot.load(json);
+                    addMessage("Bot loaded.");
+                });
+            });
+        });
+
+        document.getElementById('valin').onclick = async () => {
+            const msg = getMessage();
+            document.getElementById('in').value = '';
+            addMessage(msg, true);
+
+            let pred = await bot.predict(msg);
+
+            while (pred !== 'LUS') {
+                addMessage(messages[pred]);
+                pred = await bot.predict('')
+            }
+        }
+
+        document.getElementById('reset').onclick = () => {
+            bot.resetDialog();
+            document.getElementById('chat').innerHTML = '';
+            addMessage("Dialog reset.");
+        }
+    </script>
+</body>
+</html>
