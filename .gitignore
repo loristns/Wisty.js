@@ -4,3 +4,4 @@ attention-experiments
 package-lock.json
 test.js
 test.md
+.rts2_cache_*
