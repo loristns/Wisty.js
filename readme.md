@@ -1,5 +1,5 @@
 <p align='center'>
-    <img src="https://raw.githubusercontent.com/the-new-sky/Wisty.js/master/assets/logo-large.png" alt="Wisty" width="400"/>
+    <img src="../blob/master/assets/logo-large.png?raw=true" alt="Wisty" width="400"/>
 </p>
 
 <h3 align='center'>
