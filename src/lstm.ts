@@ -18,15 +18,18 @@ export class LSTM {
     private denseBias: tf.Tensor;
 
     private optimizer: tf.Optimizer;
+    // Let dropout be public to allow to change its value when training/inference.
+    public dropout: number;
 
     /**
      * @param inputSize The dimension of the input data.
      * @param hiddenSize The dimension of the output of the LSTM, passed to the dense layer.
      * @param outputSize The dimension of the output data.
      * @param optimizer The optimizer the model should use to train itself.
+     * @param dropout The dropout rate between the LSTM cell and the dense layer.
      */
     constructor(inputSize: number, hiddenSize: number, outputSize: number,
-        optimizer: tf.Optimizer = tf.train.adam()) {
+        optimizer: tf.Optimizer = tf.train.adam(), dropout: number = 0.2) {
         this.lstmKernel = LSTM.randomVariable([inputSize + hiddenSize, hiddenSize * 4]);
         this.lstmBias = LSTM.randomVariable([hiddenSize * 4]);
         this.lstmForgetBias = LSTM.randomVariable([1], true); // (scalar)
@@ -37,6 +40,7 @@ export class LSTM {
         this.denseBias = LSTM.randomVariable([outputSize]);
 
         this.optimizer = optimizer;
+        this.dropout = dropout;
     }
 
     /**
@@ -78,7 +82,7 @@ export class LSTM {
 
             // Execute the dense layer on top of the LSTM cell.
             const y = <tf.Tensor1D> tf
-                .dropout(nh, 0.2)
+                .dropout(nh, this.dropout)
                 .matMul(this.denseWeights)
                 .add(this.denseBias)
                 .squeeze();
