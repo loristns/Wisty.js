@@ -16,13 +16,15 @@ export declare class LSTM {
     private denseWeights;
     private denseBias;
     private optimizer;
+    dropout: number;
     /**
      * @param inputSize The dimension of the input data.
      * @param hiddenSize The dimension of the output of the LSTM, passed to the dense layer.
      * @param outputSize The dimension of the output data.
      * @param optimizer The optimizer the model should use to train itself.
+     * @param dropout The dropout rate between the LSTM cell and the dense layer.
      */
-    constructor(inputSize: number, hiddenSize: number, outputSize: number, optimizer?: tf.Optimizer);
+    constructor(inputSize: number, hiddenSize: number, outputSize: number, optimizer?: tf.Optimizer, dropout?: number);
     /**
      * Utility method randomly initializing a variable of a given shape.
      */

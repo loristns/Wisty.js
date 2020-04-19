@@ -22,7 +22,8 @@ export declare class HCN<Action> {
     private lstm;
     private lstmH;
     private lstmC;
-    constructor(actions: Action[], featurizers: Featurizer[], hiddenSize?: number, optimizer?: tf.Optimizer);
+    private lstmDropout;
+    constructor(actions: Action[], featurizers: Featurizer[], hiddenSize?: number, optimizer?: tf.Optimizer, dropout?: number);
     /**
      * Resets the state of the featurizers
      */
@@ -42,7 +43,7 @@ export declare class HCN<Action> {
     /**
      * Predict an action resulting from the given query.
      */
-    predict(query: string, sampleSize?: number): Promise<{
+    predict(query: string, sampleSize?: number, temperature?: number): Promise<{
         action: Action;
         confidence: number;
     }>;

@@ -23,9 +23,10 @@ export class HCN<Action> {
     private lstm: LSTM;
     private lstmH: tf.Tensor2D;
     private lstmC: tf.Tensor2D;
+    private lstmDropout: number;
 
     constructor(actions: Action[], featurizers: Featurizer[], hiddenSize: number = 128,
-        optimizer: tf.Optimizer = tf.train.adam(0.01)) {
+        optimizer: tf.Optimizer = tf.train.adam(0.01), dropout: number = 0.2) {
         this.actions = actions;
         this.featurizers = featurizers;
 
@@ -36,7 +37,8 @@ export class HCN<Action> {
 
         this.outputSize = actions.length;
 
-        this.lstm = new LSTM(this.inputSize, hiddenSize, this.outputSize, optimizer);
+        this.lstm = new LSTM(this.inputSize, hiddenSize, this.outputSize, optimizer, dropout);
+        this.lstmDropout = dropout;
 
         this.resetDialog();
     }
@@ -139,7 +141,11 @@ export class HCN<Action> {
     /**
      * Predict an action resulting from the given query.
      */
-    async predict(query: string, sampleSize = 10): Promise<{action: Action, confidence: number}> {
+    async predict(query: string, sampleSize: number = 10,
+        temperature: number = 1): Promise<{action: Action, confidence: number}> {
+        // If the prediction is done without sampling, dropout is disabled.
+        if (sampleSize === 1) this.lstm.dropout = 0;
+
         const features = await this.featurize(query);
         const ys: tf.Tensor1D[] = [];
         let prediction;
@@ -148,7 +154,7 @@ export class HCN<Action> {
             tf.dispose(prediction);
 
             prediction = this.lstm.predict(features, this.lstmC, this.lstmH);
-            ys.push(prediction.y.softmax());
+            ys.push(tf.tidy(() => prediction.y.div(temperature).softmax()));
         }
 
         tf.dispose([this.lstmC, this.lstmH]);
