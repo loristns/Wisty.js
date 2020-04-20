@@ -144,7 +144,11 @@ export class HCN<Action> {
     async predict(query: string, sampleSize: number = 10,
         temperature: number = 1): Promise<{action: Action, confidence: number}> {
         // If the prediction is done without sampling, dropout is disabled.
-        if (sampleSize === 1) this.lstm.dropout = 0;
+        if (sampleSize === 1) {
+            this.lstm.dropout = 0;
+        } else {
+            this.lstm.dropout = this.lstmDropout;
+        }
 
         const features = await this.featurize(query);
         const ys: tf.Tensor1D[] = [];
