@@ -6,30 +6,21 @@
     <title>Wisty Debug</title>
 
     <style>
-        input {
-            width: 50%;
-        }
-
         body {
             background: #111;
-            color: cornflowerblue;
-            font-family: Montserrat, Verdana, Geneva, Tahoma, sans-serif;
-            padding-left: 25vw;
-            padding-right: 25vw;
+            color: #8eb4fa;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            padding: 50px;
         }
 
-        ul {
-            padding-right: 40px;
-        }
-
-        li {
-            list-style: none;
-        }
-
+        ul { padding: 0; }
+        li { list-style: none; }
         li strong {
             text-align: right;
             display: block;
         }
+
+        sub { font-style: italic; }
     </style>
 </head>
 <body>
@@ -38,12 +29,12 @@
     <script src="../../dist/wisty.umd.js"></script>
 
     <ul id="chat"></ul>
-    <input type="text" id="in"/>
+    <input type="text" id="in" size="100">
     <button id="valin">Send</button>
     <button id="reset">Reset</button>
     
     <script>
-        function addMessage(message, user=false) {
+        function addMessage(message, user = false) {
             document.getElementById('chat').innerHTML += `
                 <li>
                     ${user ? '<strong>' : ''}
@@ -54,23 +45,35 @@
         }
 
         function getMessage() {
-            return document.getElementById('in').value;
+            const message = document.getElementById('in').value;
+            document.getElementById('in').value = '';
+            
+            return message;
         }
 
-        const messages = {
-            'introduce': "I'm your account helper. I can help you log into your account if your encountering troubles.",
-            'sayHello': "Hi",
-            'solved': "Happy that your issue is now solved !",
-            'sayGoodbye': "Goodbye",
-            'checkSpell': "Check if your password was well spelled, or that caps-lock/num-lock were correctly set. Does it solve it ?",
-            'resetPassword': "Alright, I just sent you an e-mail to reset your password. Follow the instruction in the message. Tell me if it solves it.",
-            'retryReset': "E-Mail can sometimes fail, let's try again...",
-            'checkResetCodeSpell': "Make sure the reset code you entered was the same that the one in the e-mail.",
-            'callSupport': "Alright, I will put you in relation with our support, they will help you solve this.",
-        }
+        const answers = {
+            'introduce':
+                "I'm your account helper. I can help you log into your account if your encountering troubles.",
+            'sayHello':
+                "Hi",
+            'solved':
+                "Happy that your issue is now solved !",
+            'sayGoodbye':
+                "Goodbye",
+            'checkSpell':
+                "Check if your password was well spelled, or that caps-lock/num-lock were correctly set. Does it solve it ?",
+            'resetPassword':
+                "Alright, I just sent you an e-mail to reset your password. Follow the instruction in the message. Tell me if it solves it.",
+            'retryReset':
+                "E-Mail can sometimes fail, let's try again...",
+            'checkResetCodeSpell':
+                "Make sure the reset code you entered was the same that the one in the e-mail.",
+            'callSupport':
+                "Alright, I will put you in relation with our support, they will help you solve this.",
+        };
 
         const USEFeaturizer = new wisty.USE();
-        const BOWFeaturizer = new wisty.BOW(50);
+        const BOWFeaturizer = new wisty.BOW(300);
 
         const bot = new wisty.HCN([
             'introduce',
@@ -83,43 +86,45 @@
             'checkResetCodeSpell',
             'callSupport',
             'LUS'
-        ], [USEFeaturizer, BOWFeaturizer], 16, tf.train.adam(0.01));
+        ], [USEFeaturizer, BOWFeaturizer], 16, tf.train.adam(0.01), 0.1);
 
-        wisty.loadStories('./index.md').then((stories) => {
-            addMessage("Stories loaded.");
+        fetch('./index.md')
+            .then((response) => response.text())
+            .then((rawStories) => {
+                const stories = wisty.parseStories(rawStories);
+                addMessage('Stories loaded.');
 
-            USEFeaturizer.init().then(() => {
-                addMessage("Featurizer loaded.");
+                USEFeaturizer.init().then(() => {
+                    addMessage('Featurizer loaded.');
 
-                bot
-                    .train(stories, 20, console.log)
-                    .then((metrics) => {
-                        console.log(bot.export());
-                        bot.load(bot.export());
-
-                        console.table(metrics);
-                        addMessage("Bot trained.");
-                    })
+                    bot
+                        .train(stories, 20, console.log)
+                        .then((metrics) => {
+                            console.table(metrics);
+                            addMessage('Bot trained.');
+                        });
+                });
             });
-        });
 
+        // When the user send a message.
         document.getElementById('valin').onclick = async () => {
             const msg = getMessage();
-            document.getElementById('in').value = '';
+
             addMessage(msg, true);
 
-            let pred = await bot.predict(msg);
+            let { action, confidence } = await bot.predict(msg, 10, 0.6);
 
-            while (pred !== 'LUS') {
-                addMessage(messages[pred]);
-                pred = await bot.predict('')
+            while (action !== 'LUS') {
+                addMessage(`${answers[action]} <sub>${confidence.toFixed(2)}</sub>`);
+
+                ({ action, confidence } = await bot.predict('', 10, 0.6));
             }
         }
 
         document.getElementById('reset').onclick = () => {
             bot.resetDialog();
             document.getElementById('chat').innerHTML = '';
-            addMessage("Dialog reset.");
+            addMessage('Dialog reset.');
         }
     </script>
 </body>

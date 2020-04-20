@@ -25,8 +25,7 @@ He can do the following actions :
 
 ## Alt happy path
 
-> Hello, can't sign in
-> i'm stuck on login page
+> Hello, can't sign in i'm stuck on login page
 - sayHello
 - checkSpell
 
