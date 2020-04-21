@@ -67,9 +67,12 @@ export class LSTM {
 
     /**
      * Make a prediction given an input and state values (c and h).
-     * @param x A vector of shape [inputSize]
+     * @param x A vector of shape [inputSize].
+     * @param c LSTM's state value.
+     * @param h LSTM's last output value.
+     * @param mask A vector of ones and zeros of shape [outputSize].
      */
-    predict(x: tf.Tensor1D, c: tf.Tensor2D, h: tf.Tensor2D): LSTMPrediction {
+    predict(x: tf.Tensor1D, c: tf.Tensor2D, h: tf.Tensor2D, mask?: tf.Tensor1D): LSTMPrediction {
         return tf.tidy(() => {
             // Execute the LSTM cell.
             const [nc, nh] = tf.basicLSTMCell(
@@ -85,7 +88,8 @@ export class LSTM {
                 .dropout(nh, this.dropout)
                 .matMul(this.denseWeights)
                 .add(this.denseBias)
-                .squeeze();
+                .squeeze()
+                .mul(mask ?? 1);
 
             return { y, nc, nh };
         });
@@ -93,11 +97,13 @@ export class LSTM {
 
     /**
      * Train the model from a sequence.
-     * @param inputSeq The input matrix of shape [length, inputSize]
-     * @param targetSeq The expected output matrix of shape [length, outputSize]
+     * @param inputSeq The input matrix of shape [length, inputSize].
+     * @param targetSeq The expected output matrix of shape [length, outputSize].
+     * @param maskSeq The mask matrix of shape [length, outputSize].
      * @returns Loss and accuracy of the model prediction.
      */
-    fitSequence(inputSeq: tf.Tensor2D, targetSeq: tf.Tensor2D): {loss: number, accuracy: number} {
+    fitSequence(inputSeq: tf.Tensor2D, targetSeq: tf.Tensor2D,
+        maskSeq?: tf.Tensor2D): {loss: number, accuracy: number} {
         let loss: number;
         let accuracy: number;
 
@@ -105,13 +111,17 @@ export class LSTM {
             let c = this.lstmInitC;
             let h = this.lstmInitH;
 
+            const inputs = inputSeq.unstack();
+            const masks = maskSeq?.unstack();
+
             // Make a prediction for each step of the input sequence.
             const predSeq = tf.stack(
-                inputSeq.unstack().map((x) => {
+                inputs.map((x, idx) => {
                     const pred = this.predict(
                         <tf.Tensor1D> x,
                         <tf.Tensor2D> c,
-                        <tf.Tensor2D> h
+                        <tf.Tensor2D> h,
+                        <tf.Tensor1D> masks?.[idx]
                     );
 
                     c = pred.nc;

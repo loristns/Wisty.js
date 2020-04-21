@@ -38,16 +38,20 @@ export declare class LSTM {
     };
     /**
      * Make a prediction given an input and state values (c and h).
-     * @param x A vector of shape [inputSize]
+     * @param x A vector of shape [inputSize].
+     * @param c LSTM's state value.
+     * @param h LSTM's last output value.
+     * @param mask A vector of ones and zeros of shape [outputSize].
      */
-    predict(x: tf.Tensor1D, c: tf.Tensor2D, h: tf.Tensor2D): LSTMPrediction;
+    predict(x: tf.Tensor1D, c: tf.Tensor2D, h: tf.Tensor2D, mask?: tf.Tensor1D): LSTMPrediction;
     /**
      * Train the model from a sequence.
-     * @param inputSeq The input matrix of shape [length, inputSize]
-     * @param targetSeq The expected output matrix of shape [length, outputSize]
+     * @param inputSeq The input matrix of shape [length, inputSize].
+     * @param targetSeq The expected output matrix of shape [length, outputSize].
+     * @param maskSeq The mask matrix of shape [length, outputSize].
      * @returns Loss and accuracy of the model prediction.
      */
-    fitSequence(inputSeq: tf.Tensor2D, targetSeq: tf.Tensor2D): {
+    fitSequence(inputSeq: tf.Tensor2D, targetSeq: tf.Tensor2D, maskSeq?: tf.Tensor2D): {
         loss: number;
         accuracy: number;
     };

@@ -5,32 +5,13 @@
 ```ts
 interface Featurizer {
     async handleQuery(query: string): tf.Tensor;
+    async getActionMask(actions: any[]): boolean[];
+
     resetDialog();
 }
 ```
 
-## Slot tracker (Featurizer)
-
-- **Initially** No tracker
-- tracker
-
-```ts
-let city = new wisty.TextSlot();
-city.train(...);
-
-let productName = new wisty.CatSlot([/* list of products names */]);
-
-slots = new wisty.SlotTracker({ city, productName });
-
-await slots.handleQuery('Hey, what the forecast in London ?')
-// slots.slots.city.parse('Hey, what the forecast in London ?')
-// ['London'] --> added to tracker
-// slots.slots.productName.parse('Hey, what the forecast in London ?')
-// []
-// retourne : <tf.Tensor> [1, 0, 1, 0] (getFeature + new features)
-```
-
-## Slot
+## Slot (featurizer)
 
 - **Initially** No slot
 - TextSlot
@@ -38,8 +19,11 @@ await slots.handleQuery('Hey, what the forecast in London ?')
 - other slots
 
 ```ts
-interface Slot {
-    parse(query: string): string[]
+abstract class Slot implements Featurizer {
+    async handleQuery(query: string): tf.Tensor;
+    async getActionMask(actions: any[]): boolean[];
+
+    abstract getValue(): any[];
 }
 ```
 
@@ -61,17 +45,6 @@ await encoder.handleQuery('Hey, what the forecast in London ?');
 let encoder = new wisty.BOW(dim=128);
 
 await encoder.handleQuery('Hey, what the forecast in London ?');
-```
-
-### Slot Action Filter
-
-- *first* no
-- **Initially** slot action filter
-
-```ts
-let filter = new wisty.ActionFilter(SlotTracker, actions);
-
-filter.setRule(action='sayHello', ())
 ```
 
 ## Hybrid Code Network

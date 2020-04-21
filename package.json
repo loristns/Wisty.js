@@ -14,7 +14,7 @@
         "dev": "microbundle watch"
     },
     "peerDependencies": {
-        "@tensorflow/tfjs": "^1.5.2",
+        "@tensorflow/tfjs": "^1.7.2",
         "@tensorflow-models/universal-sentence-encoder": "^1.2.2"
     },
     "devDependencies": {
@@ -23,10 +23,7 @@
         "eslint": "^6.8.0",
         "eslint-config-airbnb-base": "^14.1.0",
         "eslint-plugin-import": "^2.20.1",
-        "microbundle": "^0.11.0",
+        "microbundle": "0.12.0-next.8",
         "typescript": "^3.8.3"
-    },
-    "dependencies": {
-        "@tensorflow-models/universal-sentence-encoder": "^1.2.2"
     }
 }
