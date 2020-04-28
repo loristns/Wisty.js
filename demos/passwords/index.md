@@ -133,9 +133,6 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 
 > Howdy, I lost my password
 - sayHello
-- checkSpell
-
-> No... I can't remember it at all
 - resetPassword
 
 > I didn't received the email
@@ -143,8 +140,6 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 
 > No, still the same...
 - callSupport
-
-> Sounds goods, thank you anyway
 - sayGoodbye
 
 ## Alt reset failed twice path
@@ -154,9 +149,6 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - introduce
 
 > I lost the memory... What's my password ?
-- checkSpell
-
-> No, I'm completly lost
 - resetPassword
 
 > I have not received it...
@@ -164,8 +156,6 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 
 > No, I don't got it...
 - callSupport
-
-> Ok well
 - sayGoodbye
 
 ## Alt reset failed twice path 2
@@ -175,9 +165,6 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - introduce
 
 > I can't remind myself of my credentials
-- checkSpell
-
-> Huhu no, I completely forgot it
 - resetPassword
 
 > I didn't got the mail
@@ -185,8 +172,6 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 
 > Still anything in my inbox
 - callSupport
-
-> alright
 - sayGoodbye
 
 ## Reset failed bad spell path
@@ -213,9 +198,6 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - introduce
 
 > i forgot my password
-- checkSpell
-
-> No, it written correctly
 - resetPassword
 
 > uh, the reset code is wrong
@@ -236,3 +218,288 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 
 > What, I don't understand
 - callSupport
+- sayGoodbye
+
+## Test path 1
+
+> can you give my account's code
+- sayHello
+- checkSpell
+
+> no it doesn't work
+- resetPassword
+
+> yes it has worked
+- solved
+- sayGoodbye
+
+## Test path 2
+
+> I can't find my login
+- sayHello
+- resetPassword
+
+> No
+- retryReset
+
+> can you resend me a new code ?
+- resetPassword
+
+> yeah it is solved...
+- solved
+- sayGoodbye
+
+## Test path 3
+
+> Why it says me my password is incorrect ?
+- sayHello
+- checkSpell
+
+> it keeps saying me my session doesn't exist i don't know what to do
+- resetPassword
+
+> no
+- retryReset
+
+> still no
+- callSupport
+- sayGoodbye
+
+## Test path 4
+The issue seems much more important than a password lost
+
+> My account is unknown what should I do ?
+- sayHello
+- checkSpell
+
+> No it doesn't find my account at all
+- resetPassword
+
+> I didn't have received your message
+- retryReset
+
+> I still didn't have received any mail
+- callSupport
+- sayGoodbye
+
+## Test path 5
+
+> hello !
+- sayHello
+- introduce
+
+> I can't connect me on the website
+- checkSpell
+
+> no
+- resetPassword
+
+When the user is confused, the bot can call the support directly
+
+> it's too complicated for me
+- callSupport
+- sayGoodbye
+
+## Test path 6
+
+> Hey
+- sayHello
+- introduce
+
+> I think i have a problem can you help me ?
+- introduce
+
+> i can't log in
+- checkSpell
+
+> no
+- resetPassword
+
+> yes
+- solved
+- sayGoodbye
+
+## Test path 7
+
+> can't connect to my account
+- sayHello
+- checkSpell
+
+> my bad caps-locks
+- solved
+- sayGoodbye
+
+## Test path 8
+
+> i forgot my password
+- sayHello
+- resetPassword
+
+> Solved thanks
+- solved
+- sayGoodbye
+
+## Test path 9
+
+> Hi, I lost my password
+- sayHello
+- resetPassword
+
+> it's not working
+- retryReset
+
+> not solved
+- callSupport
+- sayGoodbye
+
+## Test path 10
+
+> hey can't sign in
+- sayHello
+- checkSpell
+
+> no
+- resetPassword
+
+> yep
+- solved
+- sayGoodbye
+
+## Test path 11
+
+> hola
+- sayHello
+- introduce
+
+> can't remind my credentials
+- resetPassword
+
+> nope
+- retryReset
+
+> nope
+- callSupport
+- sayGoodbye
+
+## Test path 12
+
+> hey can't log in today
+- sayHello
+- checkSpell
+
+> that's ok
+- solved
+- sayGoodbye
+
+## Test path 13
+
+> can't get in
+- sayHello
+- checkSpell
+
+> yes it was well spelled
+- resetPassword
+
+> what mail ?
+- retryReset
+
+> thx
+- solved
+- sayGoodbye
+
+## Test path 14
+
+> my login doesn't work today
+- sayHello
+- checkSpell
+
+> nope
+- resetPassword
+
+> okay
+- solved
+- sayGoodbye
+
+## Test path 15
+
+> Hi
+- sayHello
+- introduce
+
+> I've got no troubles
+- sayGoodbye
+
+## Test path 16
+
+> Hi
+- sayHello
+- introduce
+
+> I have no problem
+- sayGoodbye
+
+## Test path 17
+
+> hey
+- sayHello
+- introduce
+
+> i'm fine
+- sayGoodbye
+
+## Test path 18
+
+> Good morning !
+- sayHello
+- introduce
+
+> my account is blocked
+- checkSpell
+
+> No
+- resetPassword
+
+> Ok, it's good !
+- solved
+- sayGoodbye
+
+## Test path 18
+
+> Good morning !
+- sayHello
+- introduce
+
+> I've got into some trouble indeed
+- checkSpell
+
+> nope
+- resetPassword
+
+> it's fine
+- solved
+- sayGoodbye
+
+## Test path 19
+
+> Hi i am not able to be logged in
+- sayHello
+- checkSpell
+
+> nah
+- resetPassword
+
+The user has found the solution by itself, it don't want to go further
+
+> no need it was ok
+- solved
+- sayGoodbye
+
+## Test path 20
+
+> can't get my password back in my memory
+- sayHello
+- resetPassword
+
+> oh i remembered it, no need to reset
+- solved
+- sayGoodbye

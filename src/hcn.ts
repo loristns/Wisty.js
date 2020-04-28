@@ -69,12 +69,29 @@ export class HCN<Action> {
     }
 
     /**
+     * Get the final action mask resulted from every featurizers.
+     */
+    private getMasks(): tf.Tensor1D {
+        return tf.tidy(() => this.featurizers
+            // Filter featurizers that support action masks.
+            .filter((featurizer) => featurizer.getActionMask !== undefined)
+            // Get action mask and convert them to tensors.
+            .map((featurizer) => <tf.Tensor1D> tf.tensor(
+                featurizer.getActionMask(this.actions),
+                undefined, 'float32'
+            ))
+            // Compute the product of every masks.
+            .reduce((acc, mask) => tf.mul(acc, mask), tf.ones([this.actions.length])));
+    }
+
+    /**
      * Trains the model on a single training story.
      */
     private async fitStory(story: Story, epoch: number): Promise<TrainingMetrics> {
         this.resetDialog();
 
         const inputs: tf.Tensor1D[] = [];
+        const masks: tf.Tensor1D[] = [];
         const targets: tf.Tensor1D[] = [];
 
         // For each story's state...
@@ -84,6 +101,8 @@ export class HCN<Action> {
             // The query must be featurized before moving to the next state.
             // eslint-disable-next-line no-await-in-loop
             inputs.push(await this.featurize(state.query));
+
+            masks.push(this.getMasks());
 
             targets.push(
                 <tf.Tensor1D> tf.oneHot(
@@ -97,7 +116,8 @@ export class HCN<Action> {
             epoch,
             ...tf.tidy(() => this.lstm.fitSequence(
                     <tf.Tensor2D> tf.stack(inputs),
-                    <tf.Tensor2D> tf.stack(targets)
+                    <tf.Tensor2D> tf.stack(targets),
+                    <tf.Tensor2D> tf.stack(masks)
             ))
         };
 
@@ -151,13 +171,15 @@ export class HCN<Action> {
         }
 
         const features = await this.featurize(query);
+        const masks = this.getMasks();
+
         const ys: tf.Tensor1D[] = [];
         let prediction;
 
         for (let i = 0; i < sampleSize; i += 1) {
             tf.dispose(prediction);
 
-            prediction = this.lstm.predict(features, this.lstmC, this.lstmH);
+            prediction = this.lstm.predict(features, this.lstmC, this.lstmH, masks);
             ys.push(tf.tidy(() => prediction.y.div(temperature).softmax()));
         }
 
@@ -166,10 +188,11 @@ export class HCN<Action> {
         this.lstmH = prediction.nh.clone();
 
         const { mean: y, variance } = tf.tidy(() => tf.moments(tf.stack(ys), 0));
+
         const actionIdx = <number> tf.tidy(() => y.argMax().arraySync());
         const confidence = <number> 1 - tf.tidy(() => variance.sqrt().arraySync()[actionIdx]);
 
-        tf.dispose([features, y, variance]);
+        tf.dispose([features, masks, y, variance]);
         tf.dispose(prediction);
         tf.dispose(ys);
 

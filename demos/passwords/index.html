@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wisty Debug</title>
+    <title>Wisty.js Password Demo</title>
 
     <style>
         body {
@@ -86,7 +86,24 @@
             'checkResetCodeSpell',
             'callSupport',
             'LUS'
-        ], [USEFeaturizer, BOWFeaturizer], 16, tf.train.adam(0.01), 0.1);
+        ], [USEFeaturizer, BOWFeaturizer], 8, tf.train.adam(0.01), 0);
+
+        /*
+        // Use the pretrained model
+
+        USEFeaturizer.init().then(() => {
+            addMessage('Featurizer loaded.');
+
+            fetch('./weights.json')
+                .then((response) => response.text())
+                .then((weights) => {
+                    bot.load(weights);
+                    addMessage('Bot loaded.')
+                });
+        });
+        */
+
+        // Train the model from scratch
 
         fetch('./index.md')
             .then((response) => response.text())
@@ -98,7 +115,7 @@
                     addMessage('Featurizer loaded.');
 
                     bot
-                        .train(stories, 20, console.log)
+                        .train(stories, 15, console.log)
                         .then((metrics) => {
                             console.table(metrics);
                             addMessage('Bot trained.');
@@ -112,12 +129,12 @@
 
             addMessage(msg, true);
 
-            let { action, confidence } = await bot.predict(msg, 10, 0.6);
+            let { action, confidence } = await bot.predict(msg, 1, 1.4);
 
             while (action !== 'LUS') {
                 addMessage(`${answers[action]} <sub>${confidence.toFixed(2)}</sub>`);
 
-                ({ action, confidence } = await bot.predict('', 10, 0.6));
+                ({ action, confidence } = await bot.predict('', 1, 1.4));
             }
         }
 

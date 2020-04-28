@@ -33,6 +33,10 @@ export declare class HCN<Action> {
      */
     private featurize;
     /**
+     * Get the final action mask resulted from every featurizers.
+     */
+    private getMasks;
+    /**
      * Trains the model on a single training story.
      */
     private fitStory;
