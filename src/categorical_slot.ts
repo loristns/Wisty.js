@@ -1,11 +1,13 @@
 import * as tf from '@tensorflow/tfjs';
 import { Featurizer } from './featurizer';
 import { fuzzyMatch } from './utils/fuzzy_match';
+import { hashcode } from './utils/hashcode';
 
 type Categories = {[category: string]: string[]};
 type Value = { category: string, extract: string, score: number };
 
-export class CategoricalSlot implements Featurizer {
+export class CategoricalSlot extends Featurizer {
+    readonly id: string;
     readonly size: number;
 
     private categoryNames: string[];
@@ -19,8 +21,12 @@ export class CategoricalSlot implements Featurizer {
 
     constructor(categories: Categories, dependantActions: any[] = [],
         inverselyDependantActions: any[] = [], threshold: number = 0.75) {
+        super();
+
         this.categoryNames = Object.keys(categories);
         this.categories = categories;
+
+        this.id = `Categorical Slot (${hashcode(JSON.stringify(this.categoryNames))})`;
 
         this.dependantActions = dependantActions;
         this.inverselyDependantActions = inverselyDependantActions;
@@ -28,6 +34,9 @@ export class CategoricalSlot implements Featurizer {
         this.threshold = threshold;
 
         this.size = 2 * this.categoryNames.length;
+    }
+
+    async init() {
         this.resetDialog();
     }
 
@@ -73,8 +82,8 @@ export class CategoricalSlot implements Featurizer {
         return features;
     }
 
-    getActionMask(actions: any[]): boolean[] {
-        return actions.map((action) => {
+    getActionMask(): boolean[] {
+        return this.actions.map((action) => {
             const u = this.value.extract === undefined;
             const d = this.dependantActions.includes(action);
             const i = this.inverselyDependantActions.includes(action);

@@ -5,3 +5,4 @@ package-lock.json
 test.js
 test.md
 .rts2_cache_*
+.vscode

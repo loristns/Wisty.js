@@ -8,7 +8,8 @@ declare type Value = {
     extract: string;
     score: number;
 };
-export declare class CategoricalSlot implements Featurizer {
+export declare class CategoricalSlot extends Featurizer {
+    readonly id: string;
     readonly size: number;
     private categoryNames;
     private categories;
@@ -17,9 +18,10 @@ export declare class CategoricalSlot implements Featurizer {
     private threshold;
     private value;
     constructor(categories: Categories, dependantActions?: any[], inverselyDependantActions?: any[], threshold?: number);
+    init(): Promise<void>;
     private featurizeValue;
     handleQuery(query: string): Promise<tf.Tensor1D>;
-    getActionMask(actions: any[]): boolean[];
+    getActionMask(): boolean[];
     resetDialog(): void;
     getValue(): Value;
 }

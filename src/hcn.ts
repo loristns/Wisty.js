@@ -16,8 +16,10 @@ type TrainingCallback = (metrics: TrainingMetrics[]) => any;
 export class HCN<Action> {
     private actions: Action[];
     private featurizers: Featurizer[];
+    private optimizer: tf.Optimizer;
 
     private inputSize: number;
+    private hiddenSize: number;
     private outputSize: number;
 
     private lstm: LSTM;
@@ -29,16 +31,32 @@ export class HCN<Action> {
         optimizer: tf.Optimizer = tf.train.adam(0.01), dropout: number = 0.2) {
         this.actions = actions;
         this.featurizers = featurizers;
+        this.optimizer = optimizer;
+
+        this.hiddenSize = hiddenSize;
+        this.outputSize = actions.length;
+
+        this.lstmDropout = dropout;
+    }
+
+    /**
+     * Initialize the model and it's featurizers.
+     */
+    async init() {
+        // Initialize asynchronously all featurizers.
+        await Promise.all(
+            this.featurizers.map((featurizer) => featurizer.init(this.actions))
+        );
 
         // The model input size is the sum of the sizes of features vectors.
-        this.inputSize = featurizers
+        this.inputSize = this.featurizers
             .map((featurizer) => featurizer.size)
             .reduce((acc, size) => acc + size, 1);
 
-        this.outputSize = actions.length;
-
-        this.lstm = new LSTM(this.inputSize, hiddenSize, this.outputSize, optimizer, dropout);
-        this.lstmDropout = dropout;
+        this.lstm = new LSTM(
+            this.inputSize, this.hiddenSize, this.outputSize,
+            this.optimizer, this.lstmDropout
+        );
 
         this.resetDialog();
     }
@@ -54,7 +72,7 @@ export class HCN<Action> {
     /**
      * Get the features vector resulted from every featurizers.
      */
-    private async featurize(query: string): Promise<tf.Tensor1D> {
+    private async handleQuery(query: string): Promise<tf.Tensor1D> {
         const features = await Promise.all(
             this.featurizers.map((featurizer) => featurizer.handleQuery(query))
         );
@@ -69,15 +87,20 @@ export class HCN<Action> {
     }
 
     /**
+     * Inform every featurizers of the taken action.
+     */
+    private handleAction(action: Action) {
+        this.featurizers.map((featurizer) => featurizer.handleAction(action));
+    }
+
+    /**
      * Get the final action mask resulted from every featurizers.
      */
-    private getMasks(): tf.Tensor1D {
+    private getActionMask(): tf.Tensor1D {
         return tf.tidy(() => this.featurizers
-            // Filter featurizers that support action masks.
-            .filter((featurizer) => featurizer.getActionMask !== undefined)
             // Get action mask and convert them to tensors.
             .map((featurizer) => <tf.Tensor1D> tf.tensor(
-                featurizer.getActionMask(this.actions),
+                featurizer.getActionMask(),
                 undefined, 'float32'
             ))
             // Compute the product of every masks.
@@ -100,9 +123,9 @@ export class HCN<Action> {
 
             // The query must be featurized before moving to the next state.
             // eslint-disable-next-line no-await-in-loop
-            inputs.push(await this.featurize(state.query));
+            inputs.push(await this.handleQuery(state.query));
 
-            masks.push(this.getMasks());
+            masks.push(this.getActionMask());
 
             targets.push(
                 <tf.Tensor1D> tf.oneHot(
@@ -110,6 +133,8 @@ export class HCN<Action> {
                     this.outputSize
                 )
             );
+
+            this.handleAction(state.action);
         }
 
         const metrics = {
@@ -170,8 +195,8 @@ export class HCN<Action> {
             this.lstm.dropout = this.lstmDropout;
         }
 
-        const features = await this.featurize(query);
-        const masks = this.getMasks();
+        const features = await this.handleQuery(query);
+        const masks = this.getActionMask();
 
         const ys: tf.Tensor1D[] = [];
         let prediction;
@@ -190,11 +215,13 @@ export class HCN<Action> {
         const { mean: y, variance } = tf.tidy(() => tf.moments(tf.stack(ys), 0));
 
         const actionIdx = <number> tf.tidy(() => y.argMax().arraySync());
-        const confidence = <number> 1 - tf.tidy(() => variance.sqrt().arraySync()[actionIdx]);
+        const confidence = <number> tf.tidy(() => y.sub(variance.sqrt()).arraySync()[actionIdx]);
 
         tf.dispose([features, masks, y, variance]);
         tf.dispose(prediction);
         tf.dispose(ys);
+
+        this.handleAction(this.actions[actionIdx]);
 
         return { action: this.actions[actionIdx], confidence };
     }
@@ -203,33 +230,28 @@ export class HCN<Action> {
      * Load the models parameters from a JSON formatted string.
      */
     load(json: string) {
-        tf.tidy(() => {
-            const weights = JSON.parse(json);
+        const parameters = JSON.parse(json);
 
-            // Convert arrays into tensors
-            Object.entries(weights)
-                .forEach(([key, array]) => {
-                    weights[key] = tf.tensor(<any[]> array).variable();
-                });
-
-            this.lstm.setWeights(weights);
+        this.featurizers.forEach((featurizer) => {
+            featurizer.load(parameters[featurizer.id]);
         });
+
+        this.lstm.load(parameters.lstm);
+
+        this.resetDialog();
     }
 
     /**
      * Export the models parameters in a JSON format.
      */
-    export(): string {
-        return tf.tidy(() => {
-            const weights = {};
+    async export(): Promise<string> {
+        const parameters = { lstm: await this.lstm.export() };
 
-            // Convert tensors into arrays
-            Object.entries(this.lstm.getWeights())
-                .forEach(([key, tensor]) => {
-                    weights[key] = tensor.arraySync();
-                });
-
-            return JSON.stringify(weights);
+        this.featurizers.forEach((featurizer) => {
+            parameters[featurizer.id] = featurizer.export();
         });
+
+        await Promise.all(Object.values(parameters));
+        return JSON.stringify(parameters);
     }
 }

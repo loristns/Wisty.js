@@ -6,10 +6,12 @@ import { hashcode } from './utils/hashcode';
  * Featurizes queries as bag of words.
  * The algorithm use the hashing trick to avoid having to store a vocabulary in the memory.
  */
-export class BOW implements Featurizer {
+export class BOW extends Featurizer {
+    readonly id = 'Bag-of-Words';
     readonly size: number;
 
     constructor(size: number) {
+        super();
         this.size = size;
     }
 
@@ -23,7 +25,4 @@ export class BOW implements Featurizer {
             return <tf.Tensor1D> tf.oneHot(indexes, this.size).asType('float32').sum(0);
         });
     }
-
-    // eslint-disable-next-line class-methods-use-this
-    resetDialog() {}
 }

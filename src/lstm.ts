@@ -150,50 +150,31 @@ export class LSTM {
     /**
      * Update the given model parameters.
      */
-    setWeights(weights: {[key: string]: tf.Tensor}) {
-        Object.entries(weights)
-            .forEach(([key, tensor]) => {
-                // TODO: Can we make this less ugly ?
-                switch (key) {
-                case 'lstmKernel':
-                    this.lstmKernel = tensor;
-                    break;
-                case 'lstmBias':
-                    this.lstmBias = tensor;
-                    break;
-                case 'lstmForgetBias':
-                    this.lstmForgetBias = tensor;
-                    break;
-                case 'lstmInitH':
-                    this.lstmInitH = tensor;
-                    break;
-                case 'lstmInitC':
-                    this.lstmInitC = tensor;
-                    break;
-                case 'denseWeights':
-                    this.denseWeights = tensor;
-                    break;
-                case 'denseBias':
-                    this.denseBias = tensor;
-                    break;
-                default:
-                    break;
-                }
-            });
+    load(weights: {[key: string]: any}) {
+        // Convert every parameter to a tf variable tensor.
+        this.lstmKernel = tf.tensor(weights.lstmKernel).variable();
+        this.lstmBias = tf.tensor(weights.lstmBias).variable();
+        this.lstmForgetBias = tf.tensor(weights.lstmForgetBias).variable();
+        this.lstmInitH = tf.tensor(weights.lstmInitH).variable();
+        this.lstmInitC = tf.tensor(weights.lstmInitC).variable();
+        this.denseWeights = tf.tensor(weights.denseWeights).variable();
+        this.denseBias = tf.tensor(weights.denseBias).variable();
     }
 
     /**
      * Return all the LSTM model parameters.
      */
-    getWeights(): {[key: string]: tf.Tensor} {
-        return {
-            lstmKernel: this.lstmKernel.clone(),
-            lstmBias: this.lstmBias.clone(),
-            lstmForgetBias: this.lstmForgetBias.clone(),
-            lstmInitH: this.lstmInitH.clone(),
-            lstmInitC: this.lstmInitC.clone(),
-            denseWeights: this.denseWeights.clone(),
-            denseBias: this.denseBias.clone()
+    async export(): Promise<{[key: string]: any}> {
+        const exports = {
+            lstmKernel: await this.lstmKernel.array(),
+            lstmBias: await this.lstmBias.array(),
+            lstmForgetBias: await this.lstmForgetBias.array(),
+            lstmInitH: await this.lstmInitH.array(),
+            lstmInitC: await this.lstmInitC.array(),
+            denseWeights: await this.denseWeights.array(),
+            denseBias: await this.denseBias.array()
         };
+
+        return exports;
     }
 }

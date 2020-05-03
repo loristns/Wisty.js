@@ -5,7 +5,9 @@ import { Featurizer } from './featurizer';
 /**
  * Featurizes queries using the Universal Sentence Encoder model.
  */
-export class USE implements Featurizer {
+export class USE extends Featurizer {
+    readonly id = 'Universal Sentence Encoder';
+
     private encoder: use.UniversalSentenceEncoder;
     private emptyEncoding: tf.Tensor1D;
 
@@ -14,7 +16,8 @@ export class USE implements Featurizer {
     /**
      * Initializes the Universal Sentence Encoder model.
      */
-    async init() {
+    async init(actions: any[]) {
+        super.init(actions);
         this.encoder = await use.load();
 
         // Cache the empty string embed (for optimization purpose).
@@ -43,7 +46,4 @@ export class USE implements Featurizer {
 
         return this.encodeQuery(query);
     }
-
-    // eslint-disable-next-line class-methods-use-this
-    resetDialog() {}
 }

@@ -17,7 +17,9 @@ declare type TrainingCallback = (metrics: TrainingMetrics[]) => any;
 export declare class HCN<Action> {
     private actions;
     private featurizers;
+    private optimizer;
     private inputSize;
+    private hiddenSize;
     private outputSize;
     private lstm;
     private lstmH;
@@ -25,17 +27,25 @@ export declare class HCN<Action> {
     private lstmDropout;
     constructor(actions: Action[], featurizers: Featurizer[], hiddenSize?: number, optimizer?: tf.Optimizer, dropout?: number);
     /**
+     * Initialize the model and it's featurizers.
+     */
+    init(): Promise<void>;
+    /**
      * Resets the state of the featurizers
      */
     resetDialog(): void;
     /**
      * Get the features vector resulted from every featurizers.
      */
-    private featurize;
+    private handleQuery;
+    /**
+     * Inform every featurizers of the taken action.
+     */
+    private handleAction;
     /**
      * Get the final action mask resulted from every featurizers.
      */
-    private getMasks;
+    private getActionMask;
     /**
      * Trains the model on a single training story.
      */
@@ -58,6 +68,6 @@ export declare class HCN<Action> {
     /**
      * Export the models parameters in a JSON format.
      */
-    export(): string;
+    export(): Promise<string>;
 }
 export {};

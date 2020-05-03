@@ -58,14 +58,14 @@ export declare class LSTM {
     /**
      * Update the given model parameters.
      */
-    setWeights(weights: {
-        [key: string]: tf.Tensor;
+    load(weights: {
+        [key: string]: any;
     }): void;
     /**
      * Return all the LSTM model parameters.
      */
-    getWeights(): {
-        [key: string]: tf.Tensor;
-    };
+    export(): Promise<{
+        [key: string]: any;
+    }>;
 }
 export {};

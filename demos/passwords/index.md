@@ -503,3 +503,42 @@ The user has found the solution by itself, it don't want to go further
 > oh i remembered it, no need to reset
 - solved
 - sayGoodbye
+
+## DA 1
+
+> Hi, I can't get in, I'm stuck on the login page
+- sayHello
+- checkSpell
+
+> Oh, I didn't write it right, thank you
+- solved
+- sayGoodbye
+
+## DA 2
+
+> I can't get into
+- sayHello
+- checkSpell
+
+> No, I can't go in yet
+- resetPassword
+
+> Oh thank you
+- solved
+- sayGoodbye
+
+## DA 3
+
+> Hi
+- sayHello
+- introduce
+
+> I have problems logging in
+- checkSpell
+
+> No, that does not work
+- resetPassword
+
+> Thanks for your help
+- solved
+- sayGoodbye
