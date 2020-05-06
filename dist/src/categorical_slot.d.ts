@@ -18,7 +18,7 @@ export declare class CategoricalSlot extends Featurizer {
     private threshold;
     private value;
     constructor(categories: Categories, dependantActions?: any[], inverselyDependantActions?: any[], threshold?: number);
-    init(): Promise<void>;
+    init(actions: any[]): Promise<void>;
     private featurizeValue;
     handleQuery(query: string): Promise<tf.Tensor1D>;
     getActionMask(): boolean[];

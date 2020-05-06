@@ -43,7 +43,7 @@ export declare class LSTM {
      * @param h LSTM's last output value.
      * @param mask A vector of ones and zeros of shape [outputSize].
      */
-    predict(x: tf.Tensor1D, c: tf.Tensor2D, h: tf.Tensor2D, mask?: tf.Tensor1D): LSTMPrediction;
+    predict(x: tf.Tensor1D, c: tf.Tensor2D, h: tf.Tensor2D, mask?: tf.Tensor1D, temperature?: number): LSTMPrediction;
     /**
      * Train the model from a sequence.
      * @param inputSeq The input matrix of shape [length, inputSize].

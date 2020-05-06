@@ -36,7 +36,8 @@ export class CategoricalSlot extends Featurizer {
         this.size = 2 * this.categoryNames.length;
     }
 
-    async init() {
+    async init(actions: any[]) {
+        await super.init(actions);
         this.resetDialog();
     }
 

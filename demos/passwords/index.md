@@ -3,14 +3,14 @@
 I lost my password bot is a tiny bot helping people find their login back.
 He can do the following actions :
 
-* introduce
 * sayHello
+* introduce
+* askForDetails
 * solved
 * sayGoodbye
 * checkSpell
 * resetPassword
 * retryReset
-* checkResetCodeSpell
 * callSupport
 
 ## Happy path
@@ -92,6 +92,9 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - introduce
 
 > Alright, sorry, i lost myself
+- askForDetails
+
+> nothing
 - sayGoodbye
 
 ## Reset failed once path
@@ -174,7 +177,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - callSupport
 - sayGoodbye
 
-## Reset failed bad spell path
+## ♻
 
 > I CAN'T SIGN IN
 - sayHello
@@ -183,15 +186,11 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 > NO I ALREADY TRIED
 - resetPassword
 
-> IT SAY THE CODE IS INCORRECT
-- checkResetCodeSpell
-
-> OH IT WAS THIS FINE
+> OH ITS FINE
 - solved
 - sayGoodbye
 
-
-## Alt reset failed bad spell path
+## Alt ♻
 
 > hey
 - sayHello
@@ -200,10 +199,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 > i forgot my password
 - resetPassword
 
-> uh, the reset code is wrong
-- checkResetCodeSpell
-
-> Oh sorry, my fault. It worked
+> It worked
 - solved
 - sayGoodbye
 
@@ -214,7 +210,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - introduce
 
 > What is this ?
-- introduce
+- askForDetails
 
 > What, I don't understand
 - callSupport
@@ -307,7 +303,7 @@ When the user is confused, the bot can call the support directly
 - introduce
 
 > I think i have a problem can you help me ?
-- introduce
+- askForDetails
 
 > i can't log in
 - checkSpell
@@ -463,6 +459,9 @@ When the user is confused, the bot can call the support directly
 - solved
 - sayGoodbye
 
+> bye
+- sayGoodbye
+
 ## Test path 18
 
 > Good morning !
@@ -504,6 +503,165 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
+## Test path 21
+
+> hi
+- sayHello
+- introduce
+
+> yes
+- askForDetails
+
+> unable to get logged in
+- checkSpell
+
+> it does not
+- resetPassword
+
+> it does
+- solved
+- sayGoodbye
+
+## Test path 22
+
+> hello
+- sayHello
+- introduce
+
+> help please
+- askForDetails
+
+> i lost my password
+- resetPassword
+
+> alright
+- solved
+- sayGoodbye
+
+## Test path 23
+
+> Good morning can you help ?
+- sayHello
+- introduce
+
+> can you help me
+- askForDetails
+
+> my password doesn't work
+- checkSpell
+
+> I tried at least 10 times !
+- resetPassword
+
+> an e-mail you said ?
+- retryReset
+
+> Hum no mail
+- callSupport
+- sayGoodbye
+
+## Test path 24
+
+> hello
+- sayHello
+- introduce
+
+> how are you ?
+- askForDetails
+
+> can you reset my password
+- resetPassword
+
+> fine thanks
+- solved
+- sayGoodbye
+
+## Test path 25
+
+> good afternoon
+- sayHello
+- introduce
+
+> ok cool, i do have a problem
+- askForDetails
+
+> cannot access my account
+- checkSpell
+
+> it does
+- solved
+- sayGoodbye
+
+## Test path 24
+
+> what
+- sayHello
+- introduce
+
+> wtf
+- askForDetails
+
+> bye
+- sayGoodbye
+
+## Test path 25
+
+> hey
+- sayHello
+- introduce
+
+> yes i have a problem
+- askForDetails
+
+> i am enable to get logged in
+- checkSpell
+
+> no
+- resetPassword
+
+> hum alright
+- solved
+- sayGoodbye
+
+## Test path 26
+
+> hey
+- sayHello
+- introduce
+
+> reset my password
+- resetPassword
+
+> no need bye
+- sayGoodbye
+
+## Test path 27
+
+> hello
+- sayHello
+- introduce
+
+> have a nice day
+- sayGoodbye
+
+> bye
+- sayGoodbye
+
+> goodbye
+- sayGoodbye
+
+## Test path 28
+
+> hey
+- sayHello
+- introduce
+
+> do you have a problem with me ?
+- askForDetails
+
+> in nothing, in nothing
+- sayGoodbye
+
 ## DA 1
 
 > Hi, I can't get in, I'm stuck on the login page
@@ -512,6 +670,9 @@ The user has found the solution by itself, it don't want to go further
 
 > Oh, I didn't write it right, thank you
 - solved
+- sayGoodbye
+
+> bye
 - sayGoodbye
 
 ## DA 2

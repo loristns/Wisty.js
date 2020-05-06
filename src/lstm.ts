@@ -72,7 +72,8 @@ export class LSTM {
      * @param h LSTM's last output value.
      * @param mask A vector of ones and zeros of shape [outputSize].
      */
-    predict(x: tf.Tensor1D, c: tf.Tensor2D, h: tf.Tensor2D, mask?: tf.Tensor1D): LSTMPrediction {
+    predict(x: tf.Tensor1D, c: tf.Tensor2D, h: tf.Tensor2D, mask?: tf.Tensor1D,
+        temperature: number = 1): LSTMPrediction {
         return tf.tidy(() => {
             // Execute the LSTM cell.
             const [nc, nh] = tf.basicLSTMCell(
@@ -84,12 +85,17 @@ export class LSTM {
             );
 
             // Execute the dense layer on top of the LSTM cell.
-            const y = <tf.Tensor1D> tf
+            let y = <tf.Tensor1D> tf
                 .dropout(nh, this.dropout)
                 .matMul(this.denseWeights)
                 .add(this.denseBias)
                 .squeeze()
+                .div(temperature)
+                .softmax()
                 .mul(mask ?? 1);
+
+            // Apply normalization after the mask to get probabilities.
+            y = y.div(tf.sum(y));
 
             return { y, nc, nh };
         });
@@ -132,7 +138,8 @@ export class LSTM {
             );
 
             // Compare the predicted sequence with the target.
-            const lossScalar = <tf.Scalar> tf.losses.softmaxCrossEntropy(targetSeq, predSeq);
+            const lossScalar = <tf.Scalar> tf.metrics.categoricalCrossentropy(targetSeq, predSeq)
+                .mean();
 
             // Store the loss and accuracy measures.
             loss = <number> lossScalar.arraySync();
@@ -151,14 +158,16 @@ export class LSTM {
      * Update the given model parameters.
      */
     load(weights: {[key: string]: any}) {
-        // Convert every parameter to a tf variable tensor.
-        this.lstmKernel = tf.tensor(weights.lstmKernel).variable();
-        this.lstmBias = tf.tensor(weights.lstmBias).variable();
-        this.lstmForgetBias = tf.tensor(weights.lstmForgetBias).variable();
-        this.lstmInitH = tf.tensor(weights.lstmInitH).variable();
-        this.lstmInitC = tf.tensor(weights.lstmInitC).variable();
-        this.denseWeights = tf.tensor(weights.denseWeights).variable();
-        this.denseBias = tf.tensor(weights.denseBias).variable();
+        tf.tidy(() => {
+            // Convert every parameter to a tf variable tensor.
+            this.lstmKernel = tf.tensor(weights.lstmKernel).variable();
+            this.lstmBias = tf.tensor(weights.lstmBias).variable();
+            this.lstmForgetBias = tf.tensor(weights.lstmForgetBias).variable();
+            this.lstmInitH = tf.tensor(weights.lstmInitH).variable();
+            this.lstmInitC = tf.tensor(weights.lstmInitC).variable();
+            this.denseWeights = tf.tensor(weights.denseWeights).variable();
+            this.denseBias = tf.tensor(weights.denseBias).variable();
+        });
     }
 
     /**

@@ -1,0 +1,81 @@
+import * as tf from '@tensorflow/tfjs';
+import { Featurizer } from './featurizer';
+
+/**
+ * Rule-based featurizer improving model robustness.
+ *
+ * - Featurize the previous action the model has taken.
+ * - Mask the LUS action when the user has just talked.
+ *   (Force the model to reply at least once)
+ * - Mask the previous action.
+ *   (Prevent looping : the model can't take two times in a row the same action)
+ */
+export class ActionFeaturizer extends Featurizer {
+    readonly id = 'Action Featurizer';
+    size: number;
+
+    private LUSAction: any;
+    private maskLUS: boolean;
+    private maskPreviousAction: boolean;
+
+    private userTalked: boolean;
+    private previousAction: any;
+
+    /**
+     * @param maskLUS Enable the masking of LUS when the user has just talked
+     * @param maskPreviousAction Enable the masking of the previous action
+     * @param LUSAction The action the bot takes to let the user talk
+     */
+    constructor(maskLUS: boolean = true,
+        maskPreviousAction: boolean = true, LUSAction: any = 'LUS') {
+        super();
+        this.maskLUS = maskLUS;
+        this.maskPreviousAction = maskPreviousAction;
+        this.LUSAction = LUSAction;
+
+        this.resetDialog();
+    }
+
+    async init(actions: any[]) {
+        await super.init(actions);
+
+        this.size = actions.length;
+    }
+
+    async handleQuery(query: string): Promise<tf.Tensor1D> {
+        return tf.tidy(() => {
+            this.userTalked = query !== '';
+
+            // One-hot encode the previous action.
+            return <tf.Tensor1D> tf
+                .oneHot([this.actions.indexOf(this.previousAction)], this.actions.length)
+                .squeeze();
+        });
+    }
+
+    handleAction(action: any) {
+        // Store the new action if it's not the LUS action.
+        this.previousAction = action !== this.LUSAction ? action : this.previousAction;
+    }
+
+    getActionMask(): boolean[] {
+        const mask = super.getActionMask();
+
+        // Mask LUS when the user talk and the option is enabled.
+        if (this.maskLUS && this.userTalked) {
+            mask[this.actions.indexOf(this.LUSAction)] = false;
+        }
+
+        // Mask the previous action when the option is enabled and if applicable.
+        if (this.maskPreviousAction && this.actions.includes(this.previousAction)) {
+            mask[this.actions.indexOf(this.previousAction)] = false;
+        }
+
+        return mask;
+    }
+
+    resetDialog() {
+        this.userTalked = false;
+        this.previousAction = undefined;
+    }
+}

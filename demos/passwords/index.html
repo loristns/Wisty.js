@@ -3,145 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#121212"/>
     <title>Wisty.js Password Demo</title>
 
+    <link rel="stylesheet" href="https://unpkg.com/botui/build/botui.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/botui/build/botui-theme-default.css" />
     <style>
-        body {
-            background: #111;
-            color: #8eb4fa;
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
-            padding: 50px;
+        body { background-color: black; }
+        .botui-container { background-color: transparent; }
+
+        .botui-message-content {
+            color: whitesmoke;
+            background-color: rgb(73, 72, 75);
         }
 
-        ul { padding: 0; }
-        li { list-style: none; }
-        li strong {
-            text-align: right;
-            display: block;
+        .botui-message-content.human {
+            color: black;
+            background-color: rgb(140, 177, 255);
         }
 
-        sub { font-style: italic; }
+        .botui-actions-text-input {
+            color: whitesmoke;
+            border-bottom-color: rgb(140, 177, 255);
+        }
+
+        .botui-actions-buttons-button, .botui-actions-text-submit {
+            border-radius: 120px;
+            background-color: black;
+            border: 2px solid rgb(140, 177, 255);
+            color: rgb(140, 177, 255);
+            box-shadow: none;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
+    <div id="chat-ui">
+        <bot-ui></bot-ui>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/vue/latest/vue.min.js"></script>
+    <script src="https://unpkg.com/botui/build/botui.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
+
     <script src="../../dist/wisty.umd.js"></script>
 
-    <ul id="chat"></ul>
-    <input type="text" id="in" size="100">
-    <button id="valin">Send</button>
-    <button id="reset">Reset</button>
-    
     <script>
-        function addMessage(message, user = false) {
-            document.getElementById('chat').innerHTML += `
-                <li>
-                    ${user ? '<strong>' : ''}
-                    ${message}
-                    ${user ? '</strong>' : ''}
-                </li>
-            `;
-        }
+        /**
+         * These rules makes sure the bot introduce just once and send two mails maximum.
+         */
+        class PasswordRules extends wisty.Featurizer {
+            constructor() {
+                super();
+                this.id = 'PasswordRules';
+                this.size = 3;
+            }
 
-        function getMessage() {
-            const message = document.getElementById('in').value;
-            document.getElementById('in').value = '';
-            
-            return message;
-        }
+            init(actions) {
+                super.init(actions);
+                this.resetDialog();
+            }
 
-        const answers = {
-            'introduce':
-                "I'm your account helper. I can help you log into your account if your encountering troubles.",
-            'sayHello':
-                "Hi",
-            'solved':
-                "Happy that your issue is now solved !",
-            'sayGoodbye':
-                "Goodbye",
-            'checkSpell':
-                "Check if your password was well spelled, or that caps-lock/num-lock were correctly set. Does it solve it ?",
-            'resetPassword':
-                "Alright, I just sent you an e-mail to reset your password. Follow the instruction in the message. Tell me if it solves it.",
-            'retryReset':
-                "E-Mail can sometimes fail, let's try again...",
-            'checkResetCodeSpell':
-                "Make sure the reset code you entered was the same that the one in the e-mail.",
-            'callSupport':
-                "Alright, I will put you in relation with our support, they will help you solve this.",
-        };
+            handleQuery(query) {
+                return tf.tensor([
+                    this.hasIntroduced ? 1 : 0,
+                    this.hasSendedFirstMail ? 1 : 0,
+                    this.hasSendedSecondMail ? 1 : 0
+                ]);
+            }
 
-        const USEFeaturizer = new wisty.USE();
-        const BOWFeaturizer = new wisty.BOW(300);
+            handleAction(action) {
+                if (action === 'introduce') {
+                    this.hasIntroduced = true;
+                }
 
-        const bot = new wisty.HCN([
-            'introduce',
-            'sayHello',
-            'solved',
-            'sayGoodbye',
-            'checkSpell',
-            'resetPassword',
-            'retryReset',
-            'checkResetCodeSpell',
-            'callSupport',
-            'LUS'
-        ], [USEFeaturizer, BOWFeaturizer], 8, tf.train.adam(0.01), 0);
+                if (action === 'resetPassword') {
+                    this.hasSendedFirstMail = true;
+                }
 
-        // Use the pretrained model
+                if (action === 'retryReset') {
+                    this.hasSendedSecondMail = true;
+                }
+            }
 
-        bot.init().then(() => {
-            addMessage('Featurizers loaded.');
+            getActionMask() {
+                const mask = super.getActionMask();
 
-            fetch('./weights.json')
-                .then((response) => response.text())
-                .then((weights) => {
-                    bot.load(weights);
-                    addMessage('Bot loaded.')
-                });
-        });
+                mask[this.actions.indexOf('introduce')] = !this.hasIntroduced;
 
-        /*
-        // Train the model from scratch
-    
-        fetch('./index.md')
-            .then((response) => response.text())
-            .then((rawStories) => {
-                const stories = wisty.parseStories(rawStories);
-                addMessage('Stories loaded.');
+                mask[this.actions.indexOf('resetPassword')] = !this.hasSendedFirstMail 
+                    && !this.hasSendedSecondMail;
 
-                bot.init().then(() => {
-                    addMessage('Featurizers loaded.');
+                mask[this.actions.indexOf('retryReset')] = this.hasSendedFirstMail 
+                    && !this.hasSendedSecondMail;
 
-                    bot
-                        .train(stories, 15, console.log)
-                        .then((metrics) => {
-                            console.table(metrics);
-                            addMessage('Bot trained.');
-                        });
-                });
-            });
-        */
-        // When the user send a message.
-        document.getElementById('valin').onclick = async () => {
-            const msg = getMessage();
+                return mask;
+            }
 
-            addMessage(msg, true);
-
-            let { action, confidence } = await bot.predict(msg, 1, 1.4);
-
-            while (action !== 'LUS') {
-                addMessage(`${answers[action]} <sub>${confidence.toFixed(2)}</sub>`);
-
-                ({ action, confidence } = await bot.predict('', 1, 1.4));
+            resetDialog() {
+                this.hasIntroduced = false;
+                this.hasSendedFirstMail = false;
+                this.hasSendedSecondMail = false;
             }
         }
 
-        document.getElementById('reset').onclick = () => {
-            bot.resetDialog();
-            document.getElementById('chat').innerHTML = '';
-            addMessage('Dialog reset.');
+        // Define the AI
+        const passwordRules = new PasswordRules();
+        const actionRules = new wisty.ActionFeaturizer();
+        const use = new wisty.USE();
+        const bow = new wisty.BOW(300);
+
+        const ai = new wisty.HCN(
+            ['introduce', 'sayHello', 'askForDetails', 'solved', 'sayGoodbye', 'checkSpell', 'resetPassword', 'retryReset', 'callSupport', 'LUS'],
+            [passwordRules, actionRules, use, bow],
+            // Hidden size: 20, optimized by Adam, no dropout.
+            20, tf.train.adam(0.01), 0
+        );
+
+        // UI logic
+        let botui = new BotUI('chat-ui');
+
+        async function introMessages() {
+            await botui.message.bot({
+                delay: 500,
+                content: `
+                You are about to try a Wisty.js Demo.
+                If you continue, your browser will download an AI model of approximatively 30MB.`
+            });
+
+            await botui.message.bot({
+                delay: 500,
+                content: `Do you want to continue?`
+            });
+
+            let agreement = await botui.action.button({
+                delay: 500,
+                action: [
+                    { text: 'Go!', value: 'direct' },
+                    { text: 'Tell me more', value: 'context'}
+                ]
+            });
+
+            if (agreement.value == 'context') {
+                await botui.message.bot({
+                    delay: 500,
+                    content: `This is a dummy bot that pretend to help you get logged in your account.`
+                });
+
+                await botui.message.bot({
+                    delay: 500,
+                    content: `
+                    Your situation is :
+                    You have failed to log into your account, you click on the "help" button, 
+                    a chat area open, as this one.`
+                });
+
+                await botui.message.bot({
+                    delay: 500,
+                    content: `Do you want to try?`
+                });
+
+                await botui.action.button({
+                    delay: 500,
+                    action: [{ text: 'Go!', value: 'direct' }]
+                });
+            }
+
+            await botui.message.bot({
+                delay: 500,
+                content: `Perfect! The bot is loading...`
+            });
         }
+
+        async function loadModel() {
+            await ai.init();
+
+            // Load pretrained weights
+            let weights = await fetch('./weights.json').then((response) => response.text());
+            ai.load(weights);
+
+            // Or train the model from scratch :
+            // const source = await fetch('./index.md').then((response) => response.text());
+            // const stories = wisty.parseStories(source);
+            // const metrics = await ai.train(stories, 15, console.log);
+            // console.table(metrics);
+
+            await botui.message.removeAll();
+
+            await botui.message.bot({
+                delay: 500,
+                content: `The bot is loaded. Let's try it!`
+            });
+
+            await botui.message.bot({
+                delay: 500,
+                content: `A last tip: you can reset the conversation by typping '/reset'`
+            });
+        }
+
+        async function resetDialog() {
+            ai.resetDialog();
+                
+            await botui.message.removeAll();
+
+            await botui.message.bot({
+                delay: 500,
+                content: `The conversation is reset. The bot has forgotten everything you said. 😵`
+            });
+        }
+
+        async function interact() {
+            // Bot answers
+            const answers = {
+                'introduce': `
+                    I'm your account access assistant.
+                    I can help you log into your account if you have a problem with this.`,
+    
+                'sayHello': "Hi 👋",
+
+                'solved': "That's perfect. Glad to have helped. 😉",
+
+                'sayGoodbye': "Bye",
+
+                'checkSpell': `
+                    Check if your password was well spelled.
+                    Also check if you are in caps-lock or that you're numpad is enabled.
+                    Does it solves your issue ?`,
+                
+                'resetPassword': `
+                    Alright, I just sent you an e-mail to reset your password.
+                    Just follow the instruction in the message.
+                    Is it solved ?`,
+                
+                'retryReset': "I'm sending you another e-mail. Also, check your spam folder.",
+                
+                'callSupport': `
+                    Hum... I think our human support might help you better with this. 👩‍💼`,
+                
+                'askForDetails': "How may i help you?"
+            };
+
+            const query = await botui.action.text({
+                action: { placeholder: 'Enter a query...' }
+            });
+
+            if (query.value === '/reset') { 
+                await resetDialog();
+            } else {
+                let { action, confidence } = await ai.predict(query.value, 1, 1.6);
+
+                while (action !== 'LUS') {
+                    if (confidence < 0.5) {
+                        let reset = await botui.action.button({
+                            delay: 500,
+                            action: [
+                                { text: `Execute ${action} (low confidence)`, value: false },
+                                { text: 'Reset the conversation', value: true }
+                            ],
+                            addMessage: false
+                        });
+
+                        if (reset.value) {
+                            await resetDialog();
+                            break;
+                        }
+                    }
+
+                    await botui.message.bot({
+                        delay: 500,
+                        loading: true,
+                        content: `${answers[action]} (${confidence.toFixed(2)})`
+                    });
+
+                    if (action === 'sayGoodbye') {
+                        let reset = await botui.action.button({
+                            delay: 500,
+                            action: [
+                                { text: 'Try again', value: true },
+                                { text: 'Continue chatting', value: false },
+                            ],
+                            addMessage: false
+                        });
+
+                        if (reset.value) {
+                            await resetDialog();
+                            break;
+                        }
+                    }
+
+                    ({ action, confidence } = await ai.predict('', 1, 1.6));
+                }
+            }
+
+        }
+
+        introMessages()
+            .then(loadModel)
+            .then(async () => {
+                while (true) {
+                    await interact();
+                }
+            });
     </script>
 </body>
 </html>

@@ -17,7 +17,7 @@ export class USE extends Featurizer {
      * Initializes the Universal Sentence Encoder model.
      */
     async init(actions: any[]) {
-        super.init(actions);
+        await super.init(actions);
         this.encoder = await use.load();
 
         // Cache the empty string embed (for optimization purpose).

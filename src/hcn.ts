@@ -162,15 +162,14 @@ export class HCN<Action> {
 
         // For each epoch...
         for (let epoch = 0; epoch < nEpochs; epoch += 1) {
-            let epochMetrics = [];
+            const epochMetrics = [];
 
             // For each training story...
-            stories.forEach((story) => {
-                epochMetrics.push(this.fitStory(story, epoch));
-            });
-
-            // eslint-disable-next-line no-await-in-loop
-            epochMetrics = await Promise.all(epochMetrics);
+            for (let storyIdx = 0; storyIdx < stories.length; storyIdx += 1) {
+                // (Each story must be fitted sequentially)
+                // eslint-disable-next-line no-await-in-loop
+                epochMetrics.push(await this.fitStory(stories[storyIdx], epoch));
+            }
 
             if (onEpochEnd !== undefined) {
                 onEpochEnd(epochMetrics);
@@ -204,8 +203,8 @@ export class HCN<Action> {
         for (let i = 0; i < sampleSize; i += 1) {
             tf.dispose(prediction);
 
-            prediction = this.lstm.predict(features, this.lstmC, this.lstmH, masks);
-            ys.push(tf.tidy(() => prediction.y.div(temperature).softmax()));
+            prediction = this.lstm.predict(features, this.lstmC, this.lstmH, masks, temperature);
+            ys.push(prediction.y);
         }
 
         tf.dispose([this.lstmC, this.lstmH]);
