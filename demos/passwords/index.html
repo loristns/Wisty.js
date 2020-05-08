@@ -46,8 +46,9 @@
     <script src="https://unpkg.com/botui/build/botui.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
-
+    <!--
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
+    -->
     <script src="../../dist/wisty.umd.js"></script>
 
     <script>
@@ -112,14 +113,20 @@
         // Define the AI
         const passwordRules = new PasswordRules();
         const actionRules = new wisty.ActionFeaturizer();
-        const use = new wisty.USE();
-        const bow = new wisty.BOW(300);
+
+        // const use = new wisty.USE();
+
+        const bow = new wisty.BOW(50);
+        const fasttext = new wisty.WordEmbedding(
+            async () => await fetch('./fasttext_light_en_30.json').then((response) => response.text()),
+            30
+        );
 
         const ai = new wisty.HCN(
             ['introduce', 'sayHello', 'askForDetails', 'solved', 'sayGoodbye', 'checkSpell', 'resetPassword', 'retryReset', 'callSupport', 'LUS'],
-            [passwordRules, actionRules, use, bow],
-            // Hidden size: 20, optimized by Adam, no dropout.
-            20, tf.train.adam(0.01), 0
+            [passwordRules, actionRules, bow, fasttext],
+            // Hidden size: 32, optimized by Adam, no dropout.
+            32, tf.train.adam(0.05), 0
         );
 
         // UI logic
@@ -130,7 +137,7 @@
                 delay: 500,
                 content: `
                 You are about to try a Wisty.js Demo.
-                If you continue, your browser will download an AI model of approximatively 30MB.`
+                If you continue, your browser will download an AI model of approximatively 6MB.`
             });
 
             await botui.message.bot({
@@ -187,7 +194,7 @@
             // Or train the model from scratch :
             // const source = await fetch('./index.md').then((response) => response.text());
             // const stories = wisty.parseStories(source);
-            // const metrics = await ai.train(stories, 15, console.log);
+            // const metrics = await ai.train(stories, 20, console.log);
             // console.table(metrics);
 
             await botui.message.removeAll();
@@ -252,7 +259,7 @@
             if (query.value === '/reset') { 
                 await resetDialog();
             } else {
-                let { action, confidence } = await ai.predict(query.value, 1, 1.6);
+                let { action, confidence } = await ai.predict(query.value, 1, 2);
 
                 while (action !== 'LUS') {
                     if (confidence < 0.5) {
@@ -293,7 +300,7 @@
                         }
                     }
 
-                    ({ action, confidence } = await ai.predict('', 1, 1.6));
+                    ({ action, confidence } = await ai.predict('', 1, 2));
                 }
             }
 

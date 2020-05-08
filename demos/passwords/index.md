@@ -644,12 +644,6 @@ The user has found the solution by itself, it don't want to go further
 > have a nice day
 - sayGoodbye
 
-> bye
-- sayGoodbye
-
-> goodbye
-- sayGoodbye
-
 ## Test path 28
 
 > hey
@@ -662,6 +656,22 @@ The user has found the solution by itself, it don't want to go further
 > in nothing, in nothing
 - sayGoodbye
 
+## Test path 29
+
+> morning'
+- sayHello
+- introduce
+
+> what's up
+- askForDetails
+
+> can you help me
+- askForDetails
+
+> please help
+- callSupport
+- sayGoodbye
+
 ## DA 1
 
 > Hi, I can't get in, I'm stuck on the login page
@@ -670,9 +680,6 @@ The user has found the solution by itself, it don't want to go further
 
 > Oh, I didn't write it right, thank you
 - solved
-- sayGoodbye
-
-> bye
 - sayGoodbye
 
 ## DA 2
