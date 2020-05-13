@@ -53,10 +53,7 @@ export class HCN<Action> {
             .map((featurizer) => featurizer.size)
             .reduce((acc, size) => acc + size, 1);
 
-        this.lstm = new LSTM(
-            this.inputSize, this.hiddenSize, this.outputSize,
-            this.optimizer, this.lstmDropout
-        );
+        this.lstm = new LSTM(this.inputSize, this.hiddenSize, this.outputSize, this.lstmDropout);
 
         this.resetDialog();
     }
@@ -70,20 +67,28 @@ export class HCN<Action> {
     }
 
     /**
-     * Get the features vector resulted from every featurizers.
+     * Get the data returned from every featurizer's handleQuery method.
      */
-    private async handleQuery(query: string): Promise<tf.Tensor1D> {
-        const features = await Promise.all(
+    private async handleQuery(query: string): Promise<any[]> {
+        return Promise.all(
             this.featurizers.map((featurizer) => featurizer.handleQuery(query))
         );
+    }
 
-        // Add a zero to make tf.concat work consistently even with only one featurizer.
-        features.push(tf.zeros([1]));
-        const featuresVec = tf.concat(features);
+    /**
+     * Get the embedding vector resulted from every featurizers.
+     */
+    private getOptimizableFeatures(features: tf.Tensor[]): tf.Tensor1D {
+        return tf.tidy(() => {
+            const embeddings = this.featurizers.map(
+                (featurizer, idx) => featurizer.getOptimizableFeatures(features[idx])
+            );
 
-        tf.dispose(features);
+            // Add a zero to make tf.concat work consistently even with only one featurizer.
+            embeddings.push(tf.zeros([1]));
 
-        return featuresVec;
+            return <tf.Tensor1D> tf.concat(embeddings);
+        });
     }
 
     /**
@@ -113,7 +118,9 @@ export class HCN<Action> {
     private async fitStory(story: Story, epoch: number): Promise<TrainingMetrics> {
         this.resetDialog();
 
-        const inputs: tf.Tensor1D[] = [];
+        // Prepare the input data.
+
+        const inputs: tf.Tensor[][] = [];
         const masks: tf.Tensor1D[] = [];
         const targets: tf.Tensor1D[] = [];
 
@@ -137,19 +144,50 @@ export class HCN<Action> {
             this.handleAction(state.action);
         }
 
-        const metrics = {
-            epoch,
-            ...tf.tidy(() => this.lstm.fitSequence(
-                    <tf.Tensor2D> tf.stack(inputs),
-                    <tf.Tensor2D> tf.stack(targets),
-                    <tf.Tensor2D> tf.stack(masks)
-            ))
-        };
+        // Fit the sequence.
+
+        let loss: number;
+        let accuracy: number;
+
+        this.optimizer.minimize(() => {
+            let { c, h } = this.lstm.initLSTM(false);
+
+            // Make a prediction for each step of the input sequence.
+            const predictions = inputs.map((features, idx) => {
+                const statePred = this.lstm.predict(
+                    <tf.Tensor1D> this.getOptimizableFeatures(features),
+                    <tf.Tensor2D> c,
+                    <tf.Tensor2D> h,
+                    <tf.Tensor1D> masks[idx]
+                );
+
+                c = statePred.nc;
+                h = statePred.nh;
+
+                return statePred.y;
+            });
+
+            // Compare the predicted sequence with the target.
+            const lossScalar = <tf.Scalar> tf.metrics.categoricalCrossentropy(
+                tf.stack(targets),
+                tf.stack(predictions)
+            ).mean();
+
+            // Store the loss and accuracy measures.
+            loss = <number> lossScalar.arraySync();
+            accuracy = <number> tf.metrics.categoricalAccuracy(
+                tf.stack(targets),
+                tf.stack(predictions)
+            ).mean().arraySync();
+
+            // Return the loss to the optimizer to update the model.
+            return lossScalar;
+        });
 
         // BUG: two tensors leak in the memory at each loop :/
         tf.dispose([inputs, targets]);
 
-        return metrics;
+        return { epoch, loss, accuracy };
     }
 
 
@@ -194,7 +232,7 @@ export class HCN<Action> {
             this.lstm.dropout = this.lstmDropout;
         }
 
-        const features = await this.handleQuery(query);
+        const features = this.getOptimizableFeatures(await this.handleQuery(query));
         const masks = this.getActionMask();
 
         const ys: tf.Tensor1D[] = [];
@@ -246,11 +284,13 @@ export class HCN<Action> {
     async export(): Promise<string> {
         const parameters = { lstm: await this.lstm.export() };
 
-        this.featurizers.forEach((featurizer) => {
-            parameters[featurizer.id] = featurizer.export();
-        });
+        for (let idx = 0; idx < this.featurizers.length; idx += 1) {
+            const featurizer = this.featurizers[idx];
 
-        await Promise.all(Object.values(parameters));
+            // eslint-disable-next-line no-await-in-loop
+            parameters[featurizer.id] = await featurizer.export();
+        }
+
         return JSON.stringify(parameters);
     }
 }

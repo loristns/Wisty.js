@@ -393,7 +393,7 @@ When the user is confused, the bot can call the support directly
 - sayHello
 - checkSpell
 
-> yes it was well spelled
+> it was well spelled
 - resetPassword
 
 > what mail ?
@@ -669,6 +669,72 @@ The user has found the solution by itself, it don't want to go further
 - askForDetails
 
 > please help
+- callSupport
+- sayGoodbye
+
+## Test path 30
+
+> Hello
+- sayHello
+- introduce
+
+> Oh, nice
+- askForDetails
+
+> I have a problem with my password, I can't log in
+- checkSpell
+
+> Oh, I was in caps-lock
+- solved
+- sayGoodbye
+
+## Test path 31
+
+> how do you do ?
+- sayHello
+- introduce
+
+> no problem
+- sayGoodbye
+
+## Test path 32
+
+> hey reset my password
+- sayHello
+- resetPassword
+
+> cancel
+- sayGoodbye
+
+## Test path 33
+
+> hello
+- sayHello
+- introduce
+
+> i've lost my password
+- resetPassword
+
+> nop
+- retryReset
+
+> nothing
+- callSupport
+- sayGoodbye
+
+## Test path 34
+
+> hey
+- sayHello
+- introduce
+
+> can you help me ?
+- askForDetails
+
+> yeah i need help
+- askForDetails
+
+> i think you can't help
 - callSupport
 - sayGoodbye
 

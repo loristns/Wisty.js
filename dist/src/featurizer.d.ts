@@ -25,10 +25,26 @@ export declare abstract class Featurizer {
      */
     init(actions: any[]): Promise<void>;
     /**
-     * Featurizes a text query into a numerical vector.
+     * Featurizes and handle a text query.
+     *
+     * This method can directly return a 1D tensor to provide features to the model.
+     * Alternatively, it can returns data of any type if the Featurizer implement a custom
+     * getOptimizableFeatures method to handle those data.
      * @async
      */
-    abstract handleQuery(query: string): Promise<tf.Tensor1D>;
+    abstract handleQuery(query: string): Promise<any>;
+    /**
+     * Turn the data returned by handleQuery into an embedding vector.
+     * This function is used to expose featurizer variables to the model optimizer for training.
+     *
+     * Reimplementing this method is not necessary if your featurizer is not meant to be optimizable
+     * through gradient descent.
+     * In this case, just return the feature vector directly using the handleQuery method.
+     *
+     * It's important to keep this function stateless, it should only depend of its tensor argument
+     * and of featurizer's variables.
+     */
+    getOptimizableFeatures(data: any): tf.Tensor1D;
     /**
      * Let the featurizer know what action the model has taken.
      */

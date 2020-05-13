@@ -20,7 +20,9 @@ export class BOW extends Featurizer {
      */
     async handleQuery(query: string): Promise<tf.Tensor1D> {
         return tf.tidy(() => {
-            const indexes = query.split(' ').map((word) => hashcode(word) % this.size);
+            const indexes = query.toLowerCase()
+                .split(/\W/g)
+                .map((word) => hashcode(word) % this.size);
 
             return <tf.Tensor1D> tf.oneHot(indexes, this.size).asType('float32').sum(0);
         });

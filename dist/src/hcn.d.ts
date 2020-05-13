@@ -35,9 +35,13 @@ export declare class HCN<Action> {
      */
     resetDialog(): void;
     /**
-     * Get the features vector resulted from every featurizers.
+     * Get the data returned from every featurizer's handleQuery method.
      */
     private handleQuery;
+    /**
+     * Get the embedding vector resulted from every featurizers.
+     */
+    private getOptimizableFeatures;
     /**
      * Inform every featurizers of the taken action.
      */

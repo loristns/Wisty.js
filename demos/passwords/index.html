@@ -116,7 +116,7 @@
 
         // const use = new wisty.USE();
 
-        const bow = new wisty.BOW(50);
+        const bow = new wisty.BOW(100);
         const fasttext = new wisty.WordEmbedding(
             async () => await fetch('./fasttext_light_en_30.json').then((response) => response.text()),
             30
@@ -126,7 +126,7 @@
             ['introduce', 'sayHello', 'askForDetails', 'solved', 'sayGoodbye', 'checkSpell', 'resetPassword', 'retryReset', 'callSupport', 'LUS'],
             [passwordRules, actionRules, bow, fasttext],
             // Hidden size: 32, optimized by Adam, no dropout.
-            32, tf.train.adam(0.05), 0
+            32, tf.train.adam(0.01), 0
         );
 
         // UI logic
@@ -188,14 +188,14 @@
             await ai.init();
 
             // Load pretrained weights
-            let weights = await fetch('./weights.json').then((response) => response.text());
-            ai.load(weights);
+            // let weights = await fetch('./weights.json').then((response) => response.text());
+            // ai.load(weights);
 
             // Or train the model from scratch :
-            // const source = await fetch('./index.md').then((response) => response.text());
-            // const stories = wisty.parseStories(source);
-            // const metrics = await ai.train(stories, 20, console.log);
-            // console.table(metrics);
+            const source = await fetch('./index.md').then((response) => response.text());
+            const stories = wisty.parseStories(source);
+            const metrics = await ai.train(stories, 25, console.log);
+            console.table(metrics);
 
             await botui.message.removeAll();
 

@@ -17,7 +17,6 @@ export class LSTM {
     private denseWeights: tf.Tensor;
     private denseBias: tf.Tensor;
 
-    private optimizer: tf.Optimizer;
     // Let dropout be public to allow to change its value when training/inference.
     public dropout: number;
 
@@ -25,11 +24,9 @@ export class LSTM {
      * @param inputSize The dimension of the input data.
      * @param hiddenSize The dimension of the output of the LSTM, passed to the dense layer.
      * @param outputSize The dimension of the output data.
-     * @param optimizer The optimizer the model should use to train itself.
      * @param dropout The dropout rate between the LSTM cell and the dense layer.
      */
-    constructor(inputSize: number, hiddenSize: number, outputSize: number,
-        optimizer: tf.Optimizer = tf.train.adam(), dropout: number = 0.2) {
+    constructor(inputSize: number, hiddenSize: number, outputSize: number, dropout: number = 0.2) {
         this.lstmKernel = LSTM.randomVariable([inputSize + hiddenSize, hiddenSize * 4]);
         this.lstmBias = LSTM.randomVariable([hiddenSize * 4]);
         this.lstmForgetBias = LSTM.randomVariable([1], true); // (scalar)
@@ -39,7 +36,6 @@ export class LSTM {
         this.denseWeights = LSTM.randomVariable([hiddenSize, outputSize]);
         this.denseBias = LSTM.randomVariable([outputSize]);
 
-        this.optimizer = optimizer;
         this.dropout = dropout;
     }
 
@@ -57,11 +53,13 @@ export class LSTM {
 
     /**
      * Gives the initial state values of the LSTM (c and h).
+     *
+     * @param clone If it is necessary to clone states variable or no.
      */
-    initLSTM(): {c: tf.Tensor2D, h: tf.Tensor2D} {
+    initLSTM(clone: boolean = true): {c: tf.Tensor2D, h: tf.Tensor2D} {
         return {
-            c: <tf.Tensor2D> this.lstmInitC.clone(),
-            h: <tf.Tensor2D> this.lstmInitH.clone()
+            c: <tf.Tensor2D> (clone ? this.lstmInitC.clone() : this.lstmInitC),
+            h: <tf.Tensor2D> (clone ? this.lstmInitH.clone() : this.lstmInitH)
         };
     }
 
@@ -99,59 +97,6 @@ export class LSTM {
 
             return { y, nc, nh };
         });
-    }
-
-    /**
-     * Train the model from a sequence.
-     * @param inputSeq The input matrix of shape [length, inputSize].
-     * @param targetSeq The expected output matrix of shape [length, outputSize].
-     * @param maskSeq The mask matrix of shape [length, outputSize].
-     * @returns Loss and accuracy of the model prediction.
-     */
-    fitSequence(inputSeq: tf.Tensor2D, targetSeq: tf.Tensor2D,
-        maskSeq?: tf.Tensor2D): {loss: number, accuracy: number} {
-        let loss: number;
-        let accuracy: number;
-
-        this.optimizer.minimize(() => {
-            let c = this.lstmInitC;
-            let h = this.lstmInitH;
-
-            const inputs = inputSeq.unstack();
-            const masks = maskSeq?.unstack();
-
-            // Make a prediction for each step of the input sequence.
-            const predSeq = tf.stack(
-                inputs.map((x, idx) => {
-                    const pred = this.predict(
-                        <tf.Tensor1D> x,
-                        <tf.Tensor2D> c,
-                        <tf.Tensor2D> h,
-                        <tf.Tensor1D> masks?.[idx]
-                    );
-
-                    c = pred.nc;
-                    h = pred.nh;
-
-                    return pred.y;
-                })
-            );
-
-            // Compare the predicted sequence with the target.
-            const lossScalar = <tf.Scalar> tf.metrics.categoricalCrossentropy(targetSeq, predSeq)
-                .mean();
-
-            // Store the loss and accuracy measures.
-            loss = <number> lossScalar.arraySync();
-            accuracy = <number> tf.metrics.categoricalAccuracy(targetSeq, predSeq)
-                .mean()
-                .arraySync();
-
-            // Return the loss to the optimizer to update the model.
-            return lossScalar;
-        });
-
-        return { loss, accuracy };
     }
 
     /**
