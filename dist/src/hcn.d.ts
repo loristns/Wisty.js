@@ -105,6 +105,9 @@ export declare class HCN<Action> {
         action: Action;
         confidence: number;
     }>;
+    /**
+     * Evaluate the model using stories.
+     */
     score(stories: Story[], sampleSize?: number, temperature?: number): Promise<Metrics>;
     /**
      * Load the models parameters from a JSON formatted string.

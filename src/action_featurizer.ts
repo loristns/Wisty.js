@@ -21,6 +21,8 @@ export class ActionFeaturizer extends Featurizer {
     private userTalked: boolean;
     private previousAction: any;
 
+    private embeddings: tf.Tensor;
+
     /**
      * @param maskLUS Enable the masking of LUS when the user has just talked
      * @param maskPreviousAction Enable the masking of the previous action
@@ -40,17 +42,23 @@ export class ActionFeaturizer extends Featurizer {
         await super.init(actions);
 
         this.size = actions.length;
+        this.embeddings = tf.tidy(() => tf.randomNormal([this.size, this.size]).variable());
     }
 
-    async handleQuery(query: string): Promise<tf.Tensor1D> {
+    async handleQuery(query: string): Promise<tf.Tensor2D> {
         return tf.tidy(() => {
             this.userTalked = query !== '';
 
             // One-hot encode the previous action.
-            return <tf.Tensor1D> tf
-                .oneHot([this.actions.indexOf(this.previousAction)], this.actions.length)
-                .squeeze();
+            return <tf.Tensor2D> tf.oneHot(
+                [this.actions.indexOf(this.previousAction)],
+                this.actions.length
+            );
         });
+    }
+
+    getOptimizableFeatures(data: tf.Tensor2D): tf.Tensor1D {
+        return <tf.Tensor1D> data.matMul(this.embeddings).squeeze();
     }
 
     handleAction(action: any) {
@@ -77,5 +85,15 @@ export class ActionFeaturizer extends Featurizer {
     resetDialog() {
         this.userTalked = false;
         this.previousAction = undefined;
+    }
+
+    load(parameters: {embeddings: number[][]}) {
+        this.embeddings = tf.tidy(() => tf.tensor(parameters.embeddings).variable());
+    }
+
+    async export(): Promise<{embeddings: number[][]}> {
+        return {
+            embeddings: <number[][]> await this.embeddings.array()
+        };
     }
 }

@@ -17,6 +17,7 @@ export declare class ActionFeaturizer extends Featurizer {
     private maskPreviousAction;
     private userTalked;
     private previousAction;
+    private embeddings;
     /**
      * @param maskLUS Enable the masking of LUS when the user has just talked
      * @param maskPreviousAction Enable the masking of the previous action
@@ -24,8 +25,15 @@ export declare class ActionFeaturizer extends Featurizer {
      */
     constructor(maskLUS?: boolean, maskPreviousAction?: boolean, LUSAction?: any);
     init(actions: any[]): Promise<void>;
-    handleQuery(query: string): Promise<tf.Tensor1D>;
+    handleQuery(query: string): Promise<tf.Tensor2D>;
+    getOptimizableFeatures(data: tf.Tensor2D): tf.Tensor1D;
     handleAction(action: any): void;
     getActionMask(): boolean[];
     resetDialog(): void;
+    load(parameters: {
+        embeddings: number[][];
+    }): void;
+    export(): Promise<{
+        embeddings: number[][];
+    }>;
 }
