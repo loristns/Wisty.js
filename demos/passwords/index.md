@@ -235,11 +235,8 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - sayHello
 - resetPassword
 
-> No
-- retryReset
-
 > can you resend me a new code ?
-- resetPassword
+- retryReset
 
 > yeah it is solved...
 - solved
@@ -459,9 +456,6 @@ When the user is confused, the bot can call the support directly
 - solved
 - sayGoodbye
 
-> bye
-- sayGoodbye
-
 ## Test path 18
 
 > Good morning !
@@ -665,9 +659,6 @@ The user has found the solution by itself, it don't want to go further
 > what's up
 - askForDetails
 
-> can you help me
-- askForDetails
-
 > please help
 - callSupport
 - sayGoodbye
@@ -728,13 +719,23 @@ The user has found the solution by itself, it don't want to go further
 - sayHello
 - introduce
 
-> can you help me ?
-- askForDetails
-
 > yeah i need help
 - askForDetails
 
 > i think you can't help
+- callSupport
+- sayGoodbye
+
+## Test path 35
+
+> good evening
+- sayHello
+- introduce
+
+> can you help me ?
+- askForDetails
+
+> you are not able to help me
 - callSupport
 - sayGoodbye
 

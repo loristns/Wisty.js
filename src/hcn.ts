@@ -3,8 +3,66 @@ import { Featurizer } from './featurizer';
 import { LSTM } from './lstm';
 import { Story } from './state';
 
-export type TrainingMetrics = {epoch: number, loss: number, accuracy: number};
-type TrainingCallback = (metrics: TrainingMetrics[]) => any;
+interface Metrics {
+    /**
+     * Epoch of the training.
+     *
+     * Not defined for validation metrics.
+     */
+    epoch?: number;
+
+    /**
+     * Model's average loss.
+     *
+     * Only defined on training metrics.
+     */
+    loss?: number;
+
+    /**
+     * Accuracy of the model over the samples.
+     *
+     * Accuracy = proportion of correctly predicted samples.
+     */
+    accuracy: number;
+
+    /**
+     * Recall of the model over the samples.
+     *
+     * Recall = (number of correctly assigned samples to a label) / (number of samples that belong
+     * to a label)
+     */
+    recall: number;
+
+    /**
+     * Precision of the model over the samples.
+     *
+     * Precision = (number of correctly assigned samples to a label) / (number of samples assigned
+     * to a label)
+     */
+    precision: number;
+
+    /**
+     * Average confidence of the model in its prediction.
+     * Ideally, this value should be approximatively equal to the model's accuracy.
+     *
+     * Only defined for validation metrics.
+     */
+    averageConfidence?: number;
+
+    /**
+     * The array of the indexes of failling samples (< 0.999 accuracy).
+     */
+    failingSamples: number[];
+}
+
+interface SampleData {
+    targets: tf.Tensor1D,
+    predictions: tf.Tensor1D,
+    loss: number,
+    isFailing: boolean
+}
+
+type TrainingCallback = (metrics: Metrics) => any;
 
 /**
  * An implementation of Hybrid Code Networks(*) dialog manager.
@@ -115,12 +173,12 @@ export class HCN<Action> {
     /**
      * Trains the model on a single training story.
      */
-    private async fitStory(story: Story, epoch: number): Promise<TrainingMetrics> {
+    private async fitStory(story: Story): Promise<SampleData> {
         this.resetDialog();
 
         // Prepare the input data.
 
-        const inputs: tf.Tensor[][] = [];
+        const inputs: any[][] = [];
         const masks: tf.Tensor1D[] = [];
         const targets: tf.Tensor1D[] = [];
 
@@ -145,9 +203,7 @@ export class HCN<Action> {
         }
 
         // Fit the sequence.
-
-        let loss: number;
-        let accuracy: number;
+        let data: SampleData;
 
         this.optimizer.minimize(() => {
             let { c, h } = this.lstm.initLSTM(false);
@@ -167,18 +223,24 @@ export class HCN<Action> {
                 return statePred.y;
             });
 
+            const targetsMatrix = tf.stack(targets);
+            const predictionsMatrix = tf.stack(predictions);
+
             // Compare the predicted sequence with the target.
             const lossScalar = <tf.Scalar> tf.metrics.categoricalCrossentropy(
-                tf.stack(targets),
-                tf.stack(predictions)
+                targetsMatrix, predictionsMatrix
             ).mean();
 
-            // Store the loss and accuracy measures.
-            loss = <number> lossScalar.arraySync();
-            accuracy = <number> tf.metrics.categoricalAccuracy(
-                tf.stack(targets),
-                tf.stack(predictions)
-            ).mean().arraySync();
+            // Store the necessary data to build metrics.
+            data = {
+                targets: tf.keep(targetsMatrix.argMax(1)),
+                predictions: tf.keep(predictionsMatrix.argMax(1)),
+                loss: <number> lossScalar.arraySync(),
+                isFailing: tf.metrics
+                    .categoricalAccuracy(targetsMatrix, predictionsMatrix)
+                    .mean()
+                    .arraySync() < 0.999
+            };
 
             // Return the loss to the optimizer to update the model.
             return lossScalar;
@@ -187,7 +249,7 @@ export class HCN<Action> {
         // BUG: two tensors leak in the memory at each loop :/
         tf.dispose([inputs, targets]);
 
-        return { epoch, loss, accuracy };
+        return data;
     }
 
 
@@ -195,35 +257,79 @@ export class HCN<Action> {
      * Trains the model using the training stories.
      */
     async train(stories: Story[], nEpochs: number = 12,
-        onEpochEnd?: TrainingCallback): Promise<TrainingMetrics[]> {
-        const metrics: TrainingMetrics[] = [];
+        onEpochEnd?: TrainingCallback): Promise<Metrics> {
+        let epochMetrics: Metrics;
 
         // For each epoch...
         for (let epoch = 0; epoch < nEpochs; epoch += 1) {
-            const epochMetrics = [];
+            const allTargets: tf.Tensor1D[] = [];
+            const allPredictions: tf.Tensor1D[] = [];
+            const allLosses: number[] = [];
+            const failingSamples: number[] = [];
 
             // For each training story...
             for (let storyIdx = 0; storyIdx < stories.length; storyIdx += 1) {
                 // (Each story must be fitted sequentially)
                 // eslint-disable-next-line no-await-in-loop
-                epochMetrics.push(await this.fitStory(stories[storyIdx], epoch));
+                const storyData = await this.fitStory(stories[storyIdx]);
+
+                allTargets.push(storyData.targets);
+                allPredictions.push(storyData.predictions);
+                allLosses.push(storyData.loss);
+
+                if (storyData.isFailing) {
+                    failingSamples.push(storyIdx);
+                }
             }
+
+            // Build the metrics.
+            const confusionMatrix = tf.tidy(() => tf.math.confusionMatrix(
+                tf.concat(allTargets),
+                tf.concat(allPredictions),
+                this.outputSize
+            ));
+
+            const truePredictions = tf.tidy(() => confusionMatrix
+                .mul(tf.eye(...confusionMatrix.shape))
+                .sum(0));
+
+            epochMetrics = {
+                epoch,
+                failingSamples,
+
+                accuracy: <number> tf.tidy(() => (
+                    truePredictions.sum().div(confusionMatrix.sum()).arraySync()
+                )),
+
+                recall: <number> tf.tidy(() => (
+                    truePredictions.div(confusionMatrix.sum(1)).mean().arraySync()
+                )),
+
+                precision: <number> tf.tidy(() => (
+                    truePredictions.div(confusionMatrix.sum(0)).mean().arraySync()
+                )),
+
+                loss: allLosses.reduce((a, b) => a + b) / allLosses.length
+            };
+
+            // Clear the tensors.
+            tf.dispose(allTargets);
+            tf.dispose(allPredictions);
+            tf.dispose([truePredictions, confusionMatrix]);
 
             if (onEpochEnd !== undefined) {
                 onEpochEnd(epochMetrics);
             }
-
-            metrics.push(...epochMetrics);
         }
 
         this.resetDialog();
-        return metrics;
+        return epochMetrics;
     }
 
     /**
      * Predict an action resulting from the given query.
      */
-    async predict(query: string, sampleSize: number = 10,
+    async predict(query: string, sampleSize: number = 1,
         temperature: number = 1): Promise<{action: Action, confidence: number}> {
         // If the prediction is done without sampling, dropout is disabled.
         if (sampleSize === 1) {
@@ -261,6 +367,73 @@ export class HCN<Action> {
         this.handleAction(this.actions[actionIdx]);
 
         return { action: this.actions[actionIdx], confidence };
+    }
+
+    /**
+     * Evaluate the model using stories.
+     */
+    async score(stories: Story[], sampleSize: number = 1,
+        temperature: number = 1): Promise<Metrics> {
+        const targets: number[] = [];
+        const predictions: number[] = [];
+        const confidences: number[] = [];
+        const failingSamples: number[] = [];
+
+        /*
+            For each stories and states, make predictions.
+         */
+        for (let storyIdx = 0; storyIdx < stories.length; storyIdx += 1) {
+            this.resetDialog();
+
+            for (let stateIdx = 0; stateIdx < stories[storyIdx].length; stateIdx += 1) {
+                const state = stories[storyIdx][stateIdx];
+
+                // eslint-disable-next-line no-await-in-loop
+                const { action, confidence } = await this.predict(
+                    state.query, sampleSize, temperature
+                );
+
+                targets.push(this.actions.indexOf(state.action));
+                predictions.push(this.actions.indexOf(action));
+                confidences.push(confidence);
+
+                if (action !== state.action && !failingSamples.includes(storyIdx)) {
+                    failingSamples.push(storyIdx);
+                }
+            }
+        }
+
+        // Build a confusion matrix out of the prediction and build the metrics.
+        const confusionMatrix = tf.tidy(() => tf.math.confusionMatrix(
+            tf.tensor(targets), tf.tensor(predictions), this.outputSize
+        ));
+
+        const truePredictions = tf.tidy(() => confusionMatrix
+            .mul(tf.eye(...confusionMatrix.shape))
+            .sum(0));
+
+        const metrics: Metrics = {
+            failingSamples,
+
+            accuracy: <number> tf.tidy(() => (
+                truePredictions.sum().div(confusionMatrix.sum()).arraySync()
+            )),
+
+            recall: <number> tf.tidy(() => (
+                truePredictions.div(confusionMatrix.sum(1)).mean().arraySync()
+            )),
+
+            precision: <number> tf.tidy(() => (
+                truePredictions.div(confusionMatrix.sum(0)).mean().arraySync()
+            )),
+
+            averageConfidence: confidences.reduce((a, b) => a + b) / confidences.length
+        };
+
+        tf.dispose([truePredictions, confusionMatrix]);
+
+        this.resetDialog();
+        return metrics;
     }
 
     /**

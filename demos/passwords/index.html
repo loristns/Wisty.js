@@ -192,10 +192,15 @@
             // ai.load(weights);
 
             // Or train the model from scratch :
-            const source = await fetch('./index.md').then((response) => response.text());
-            const stories = wisty.parseStories(source);
-            const metrics = await ai.train(stories, 25, console.log);
-            console.table(metrics);
+            const trainSource = await fetch('./index.md').then((response) => response.text());
+            const testSource = await fetch('./eval.md').then((response) => response.text());
+
+            const trainStories = wisty.parseStories(trainSource);
+            const testStories = wisty.parseStories(testSource);
+
+            await ai.train(trainStories, 25, console.log);
+
+            console.log('Test', await ai.score(testStories, 1, 1.8));
 
             await botui.message.removeAll();
 
@@ -259,7 +264,7 @@
             if (query.value === '/reset') { 
                 await resetDialog();
             } else {
-                let { action, confidence } = await ai.predict(query.value, 1, 2);
+                let { action, confidence } = await ai.predict(query.value, 1, 1.8);
 
                 while (action !== 'LUS') {
                     if (confidence < 0.5) {
@@ -300,7 +305,7 @@
                         }
                     }
 
-                    ({ action, confidence } = await ai.predict('', 1, 2));
+                    ({ action, confidence } = await ai.predict('', 1, 1.8));
                 }
             }
 
