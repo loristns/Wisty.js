@@ -1,5 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import { Featurizer } from './featurizer';
+import { initializeVariable } from './utils/initialize_variable';
 
 /**
  * Rule-based featurizer improving model robustness.
@@ -42,7 +43,7 @@ export class ActionFeaturizer extends Featurizer {
         await super.init(actions);
 
         this.size = actions.length;
-        this.embeddings = tf.tidy(() => tf.randomNormal([this.size, this.size]).variable());
+        this.embeddings = initializeVariable([this.size, this.size]);
     }
 
     async handleQuery(query: string): Promise<tf.Tensor2D> {

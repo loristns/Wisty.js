@@ -1,4 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
+import { initializeVariable } from './utils/initialize_variable';
 
 type LSTMPrediction = {y: tf.Tensor1D, nc: tf.Tensor2D, nh: tf.Tensor2D};
 
@@ -27,28 +28,16 @@ export class LSTM {
      * @param dropout The dropout rate between the LSTM cell and the dense layer.
      */
     constructor(inputSize: number, hiddenSize: number, outputSize: number, dropout: number = 0.2) {
-        this.lstmKernel = LSTM.randomVariable([inputSize + hiddenSize, hiddenSize * 4]);
-        this.lstmBias = LSTM.randomVariable([hiddenSize * 4]);
-        this.lstmForgetBias = LSTM.randomVariable([1], true); // (scalar)
-        this.lstmInitH = LSTM.randomVariable([1, hiddenSize]);
-        this.lstmInitC = LSTM.randomVariable([1, hiddenSize]);
+        this.lstmKernel = initializeVariable([inputSize + hiddenSize, hiddenSize * 4]);
+        this.lstmBias = initializeVariable([hiddenSize * 4], false, 'zeros');
+        this.lstmForgetBias = initializeVariable([1], true, 'zeros'); // (scalar)
+        this.lstmInitH = initializeVariable([1, hiddenSize]);
+        this.lstmInitC = initializeVariable([1, hiddenSize]);
 
-        this.denseWeights = LSTM.randomVariable([hiddenSize, outputSize]);
-        this.denseBias = LSTM.randomVariable([outputSize]);
+        this.denseWeights = initializeVariable([hiddenSize, outputSize]);
+        this.denseBias = initializeVariable([outputSize], false, 'zeros');
 
         this.dropout = dropout;
-    }
-
-    /**
-     * Utility method randomly initializing a variable of a given shape.
-     */
-    private static randomVariable(shape: number[], scalar: boolean = false): tf.Variable {
-        return tf.tidy(() => {
-            let randomTensor = tf.randomNormal(shape);
-            if (scalar) randomTensor = randomTensor.asScalar();
-
-            return randomTensor.variable();
-        });
     }
 
     /**

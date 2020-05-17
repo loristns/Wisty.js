@@ -9,3 +9,4 @@ export { ActionFeaturizer } from './action_featurizer';
 export { hashcode } from './utils/hashcode';
 export { parseStories } from './utils/parse_stories';
 export { fuzzyMatch } from './utils/fuzzy_match';
+export { initializeVariable } from './utils/initialize_variable';

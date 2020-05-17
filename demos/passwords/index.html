@@ -125,10 +125,12 @@
         const ai = new wisty.HCN(
             ['introduce', 'sayHello', 'askForDetails', 'solved', 'sayGoodbye', 'checkSpell', 'resetPassword', 'retryReset', 'callSupport', 'LUS'],
             [passwordRules, actionRules, bow, fasttext],
-            // Hidden size: 32, optimized by Adam, no dropout.
-            32, tf.train.adam(0.01), 0
+            // Hidden size: 16, optimized by Adam, no dropout.
+            16, tf.train.adam(0.01), 0
         );
 
+        const temperature = 2;
+    
         // UI logic
         let botui = new BotUI('chat-ui');
 
@@ -188,19 +190,19 @@
             await ai.init();
 
             // Load pretrained weights
-            // let weights = await fetch('./weights.json').then((response) => response.text());
-            // ai.load(weights);
+            let weights = await fetch('./weights.json').then((response) => response.text());
+            ai.load(weights);
 
             // Or train the model from scratch :
-            const trainSource = await fetch('./index.md').then((response) => response.text());
-            const testSource = await fetch('./eval.md').then((response) => response.text());
+            // const trainSource = await fetch('./index.md').then((response) => response.text());
+            // const testSource = await fetch('./eval.md').then((response) => response.text());
 
-            const trainStories = wisty.parseStories(trainSource);
-            const testStories = wisty.parseStories(testSource);
+            // const trainStories = wisty.parseStories(trainSource);
+            // const testStories = wisty.parseStories(testSource);
 
-            await ai.train(trainStories, 25, console.log);
+            // await ai.train(trainStories, 25, console.log);
 
-            console.log('Test', await ai.score(testStories, 1, 1.8));
+            // console.log('Test', await ai.score(testStories, 1, temperature));
 
             await botui.message.removeAll();
 
@@ -264,7 +266,7 @@
             if (query.value === '/reset') { 
                 await resetDialog();
             } else {
-                let { action, confidence } = await ai.predict(query.value, 1, 1.8);
+                let { action, confidence } = await ai.predict(query.value, 1, temperature);
 
                 while (action !== 'LUS') {
                     if (confidence < 0.5) {
@@ -305,7 +307,7 @@
                         }
                     }
 
-                    ({ action, confidence } = await ai.predict('', 1, 1.8));
+                    ({ action, confidence } = await ai.predict('', 1, temperature));
                 }
             }
 

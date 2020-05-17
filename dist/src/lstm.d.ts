@@ -24,10 +24,6 @@ export declare class LSTM {
      */
     constructor(inputSize: number, hiddenSize: number, outputSize: number, dropout?: number);
     /**
-     * Utility method randomly initializing a variable of a given shape.
-     */
-    private static randomVariable;
-    /**
      * Gives the initial state values of the LSTM (c and h).
      *
      * @param clone If it is necessary to clone states variable or no.

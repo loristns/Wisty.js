@@ -30,7 +30,7 @@
 - sayHello
 - introduce
 
-> i have a problem with my password
+> i have a problem with my account
 - checkSpell
 
 > yep, that was it
@@ -132,9 +132,6 @@
 - callSupport
 - sayGoodbye
 
-> that's not necessary
-- sayGoodbye
-
 ## 10
 
 > good morning
@@ -153,7 +150,7 @@
 > well, I do need you
 - askForDetails
 
-> It's seems like my password is not functionnal, it wonk log in when I try
+> It's seems like my password is not functionnal, it won't log in when I try
 - checkSpell
 
 > I thinked about this but it seems more complicated
@@ -161,4 +158,29 @@
 
 > Alright it seems okay this time
 - solved
+- sayGoodbye
+
+## 12
+
+> hi can you help me please i have big troubles to log in
+- sayHello
+- checkSpell
+
+> how about no
+- resetPassword
+
+> did not got your e-mail
+- retryReset
+
+> yes
+- solved
+- sayGoodbye
+
+## 13
+
+> i've lost my password
+- sayHello
+- resetPassword
+
+> bye
 - sayGoodbye
