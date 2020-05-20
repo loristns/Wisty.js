@@ -190,19 +190,19 @@
             await ai.init();
 
             // Load pretrained weights
-            let weights = await fetch('./weights.json').then((response) => response.text());
-            ai.load(weights);
+            // let weights = await fetch('./weights.json').then((response) => response.text());
+            // ai.load(weights);
 
             // Or train the model from scratch :
-            // const trainSource = await fetch('./index.md').then((response) => response.text());
-            // const testSource = await fetch('./eval.md').then((response) => response.text());
+            const source = await fetch('./index.md').then((response) => response.text());
 
-            // const trainStories = wisty.parseStories(trainSource);
-            // const testStories = wisty.parseStories(testSource);
+            const stories = wisty.parseStories(source);
+            const { train: trainStories, test: testStories } = wisty.trainTestSplit(stories, 0.2);
 
-            // await ai.train(trainStories, 25, console.log);
+            await ai.train(trainStories, 25, (metrics) => console.log('Train', metrics));
 
-            // console.log('Test', await ai.score(testStories, 1, temperature));
+            console.log('Test set', testStories);
+            console.log('Test', await ai.score(testStories, 1, temperature));
 
             await botui.message.removeAll();
 

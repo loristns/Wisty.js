@@ -777,3 +777,190 @@ The user has found the solution by itself, it don't want to go further
 > Thanks for your help
 - solved
 - sayGoodbye
+
+## Test set 1
+> hey
+- sayHello
+- introduce
+
+> what's up
+- askForDetails
+
+> hum nothing
+- sayGoodbye
+
+## Test set 2
+> hey bro
+- sayHello
+- introduce
+
+> i have troubles to log in
+- checkSpell
+
+> nope
+- resetPassword
+
+> yeah
+- solved
+- sayGoodbye
+
+## Test set 3
+
+> hey
+- sayHello
+- introduce
+
+> i have a problem with my account
+- checkSpell
+
+> yep, that was it
+- solved
+- sayGoodbye
+
+## Test set 4
+
+> hey i lost my pass
+- sayHello
+- resetPassword
+
+> no it doesn't
+- retryReset
+
+> still nothing
+- callSupport
+- sayGoodbye
+
+## Test set 5
+
+> hello
+- sayHello
+- introduce
+
+> so... can you help ?
+- askForDetails
+
+> i have troubles logging in
+- checkSpell
+
+> i tried at least 10 times...
+- resetPassword
+
+> that's what i needed thanks
+- solved
+- sayGoodbye
+
+## Test set 6
+
+> hello
+- sayHello
+- introduce
+
+> my login is wrong
+- checkSpell
+
+> nope nothing
+- resetPassword
+
+> no, not any mail
+- retryReset
+
+> still nope
+- callSupport
+- sayGoodbye
+
+## Test set 7
+
+> hey
+- sayHello
+- introduce
+
+> what is this
+- askForDetails
+
+> hummm bye
+- sayGoodbye
+
+## Test set 8
+
+> hey bro
+- sayHello
+- introduce
+
+> no i can't get logged in
+- checkSpell
+
+> no no no
+- resetPassword
+
+> yes
+- solved
+- sayGoodbye
+
+## Test set 9
+
+> hello
+- sayHello
+- introduce
+
+> reset my password
+- resetPassword
+
+> what, my mailbox is empty
+- retryReset
+
+> still nothing
+- callSupport
+- sayGoodbye
+
+## Test set 10
+
+> good morning
+- sayHello
+- introduce
+
+> goodbye
+- sayGoodbye
+
+## Test set 11
+
+> bonjour
+- sayHello
+- introduce
+
+> well, I do need you
+- askForDetails
+
+> It's seems like my password is not functionnal, it won't log in when I try
+- checkSpell
+
+> I thinked about this but it seems more complicated
+- resetPassword
+
+> Alright it seems okay this time
+- solved
+- sayGoodbye
+
+## Test set 12
+
+> hi can you help me please i have big troubles to log in
+- sayHello
+- checkSpell
+
+> how about no
+- resetPassword
+
+> did not got your e-mail
+- retryReset
+
+> yes
+- solved
+- sayGoodbye
+
+## Test set 13
+
+> i've lost my password
+- sayHello
+- resetPassword
+
+> bye
+- sayGoodbye
