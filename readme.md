@@ -1,5 +1,5 @@
 <p align='center'>
-    <img src="../master/assets/logo-large.png?raw=true" alt="Wisty" width="400"/>
+    <img src="../master/assets/logo-large.png?raw=true" alt="Wisty" style="max-height:50px"/>
 </p>
 
 <h3 align='center'>
