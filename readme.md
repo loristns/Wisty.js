@@ -3,9 +3,10 @@
 </p>
 
 <h3 align='center'>
-    Conversational interfaces in the browser.
+    Build conversational interfaces for the browser.
 </h3>
 
-Wisty.js is a JavaScript natural language processing library to turn conversations into actions.
-It support various features to build contextual chatbots, virtual assistants and other conversation-based interfaces.
-It's powered by neural networks implemented using TensorFlow.js and support training and inference both in Node.js or in the browser.
+Wisty.js is a JavaScript natural language processing library to turn conversations into actions and
+build contextual chatbots or virtual assistants for the web.
+It's powered by recurrent neural networks implemented using TensorFlow.js and support training and 
+inference in Node.js and the browser.
