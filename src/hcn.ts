@@ -2,58 +2,7 @@ import * as tf from '@tensorflow/tfjs';
 import { Featurizer } from './featurizer';
 import { LSTM } from './lstm';
 import { Story } from './state';
-
-interface Metrics {
-    /**
-     * Epoch of the training.
-     *
-     * Not defined for validation metrics.
-     */
-    epoch?: number;
-
-    /**
-     * Model's average loss.
-     *
-     * Only defined on training metrics.
-     */
-    loss?: number;
-
-    /**
-     * Accuracy of the model over the samples.
-     *
-     * Accuracy = proportion of correctly predicted samples.
-     */
-    accuracy: number;
-
-    /**
-     * Recall of the model over the samples.
-     *
-     * Recall = (number of correctly assigned samples to a label) / (number of samples that belong
-     * to a label)
-     */
-    recall: number;
-
-    /**
-     * Precision of the model over the samples.
-     *
-     * Precision = (number of correctly assigned samples to a label) / (number of samples assigned
-     * to a label)
-     */
-    precision: number;
-
-    /**
-     * Average confidence of the model in its prediction.
-     * Ideally, this value should be approximatively equal to the model's accuracy.
-     *
-     * Only defined for validation metrics.
-     */
-    averageConfidence?: number;
-
-    /**
-     * The array of the indexes of failling samples (< 0.999 accuracy).
-     */
-    failingSamples: number[];
-}
+import { Metrics } from './metrics';
 
 interface SampleData {
     targets: tf.Tensor1D,
@@ -62,7 +11,64 @@ interface SampleData {
     isFailing: boolean
 }
 
-type TrainingCallback = (metrics: Metrics) => any;
+type TrainingCallback = (metrics: Metrics) => void;
+
+/**
+ * Parameters for HCN constructor.
+ */
+interface HCNConstructorArgs {
+    /**
+     * The list of actions the model can take.
+     * (keeping the order the same is important for pretrained models)
+     */
+    actions: string[];
+
+    /**
+     * The list of featurizers the model uses.
+     * (keeping the order the same is important for pretrained models)
+     */
+    featurizers: Featurizer[];
+
+    /**
+     * The output size of the LSTM cell.
+     * Default is set to 32 units.
+     */
+    hiddenSize?: number;
+
+    /**
+     * The optimization algorithm used for training.
+     * By default, Adam with a learning rate of 0.01 is used.
+     */
+    optimizer?: tf.Optimizer;
+
+    /**
+     * The percentage of units to dropout between the LSTM cell layer and the dense.
+     * Useful for regularizing the model. It's disabled by default (value = 0).
+     */
+    dropout?: number;
+}
+
+/**
+ * Parameters for HCN train method.
+ */
+interface HCNTrainArgs {
+    /**
+     * Training stories to learn from.
+     */
+    stories: Story[];
+
+    /**
+     * Number of times the model will be passed the whole set of training stories during training.
+     * Default is set to 12 epochs.
+     */
+    nEpochs?: number;
+
+    /**
+     * After each epoch, this callback function will be executed with the metrics collected
+     * during the epoch.
+     */
+    onEpochEnd?: TrainingCallback;
+}
 
 /**
  * An implementation of Hybrid Code Networks(*) dialog manager.
@@ -71,8 +77,8 @@ type TrainingCallback = (metrics: Metrics) => any;
  *      Hybrid Code Networks: practical and efﬁcient end-to-end dialog control with supervised
  *      and reinforcement learning.
  */
-export class HCN<Action> {
-    private actions: Action[];
+export class HCN {
+    private actions: string[];
     private featurizers: Featurizer[];
     private optimizer: tf.Optimizer;
 
@@ -85,8 +91,17 @@ export class HCN<Action> {
     private lstmC: tf.Tensor2D;
     private lstmDropout: number;
 
-    constructor(actions: Action[], featurizers: Featurizer[], hiddenSize: number = 128,
-        optimizer: tf.Optimizer = tf.train.adam(0.01), dropout: number = 0.2) {
+    /**
+     * Defines the model.
+     * To fully initialize the model, run the async init() method.
+     */
+    constructor({
+        actions,
+        featurizers,
+        hiddenSize = 32,
+        optimizer = tf.train.adam(0.01),
+        dropout = 0
+    }: HCNConstructorArgs) {
         this.actions = actions;
         this.featurizers = featurizers;
         this.optimizer = optimizer;
@@ -98,7 +113,7 @@ export class HCN<Action> {
     }
 
     /**
-     * Initialize the model and it's featurizers.
+     * Initialize the model and its featurizers.
      */
     async init() {
         // Initialize asynchronously all featurizers.
@@ -117,7 +132,7 @@ export class HCN<Action> {
     }
 
     /**
-     * Resets the state of the featurizers
+     * Resets the state of the model and its featurizers.
      */
     resetDialog() {
         this.featurizers.forEach((featurizer) => featurizer.resetDialog());
@@ -152,7 +167,7 @@ export class HCN<Action> {
     /**
      * Inform every featurizers of the taken action.
      */
-    private handleAction(action: Action) {
+    private handleAction(action: string) {
         this.featurizers.map((featurizer) => featurizer.handleAction(action));
     }
 
@@ -176,8 +191,7 @@ export class HCN<Action> {
     private async fitStory(story: Story): Promise<SampleData> {
         this.resetDialog();
 
-        // Prepare the input data.
-
+        // 1. Prepare the input data.
         const inputs: any[][] = [];
         const masks: tf.Tensor1D[] = [];
         const targets: tf.Tensor1D[] = [];
@@ -202,7 +216,7 @@ export class HCN<Action> {
             this.handleAction(state.action);
         }
 
-        // Fit the sequence.
+        // 2. Fit the sequence.
         let data: SampleData;
 
         this.optimizer.minimize(() => {
@@ -255,9 +269,10 @@ export class HCN<Action> {
 
     /**
      * Trains the model using the training stories.
+     *
+     * @returns Metrics collected from the last epoch (that correspond to the trained model).
      */
-    async train(stories: Story[], nEpochs: number = 12,
-        onEpochEnd?: TrainingCallback): Promise<Metrics> {
+    async train({ stories, nEpochs = 12, onEpochEnd = undefined }: HCNTrainArgs): Promise<Metrics> {
         let epochMetrics: Metrics;
 
         // For each epoch...
@@ -328,41 +343,35 @@ export class HCN<Action> {
 
     /**
      * Predict an action resulting from the given query.
+     *
+     * @param query The given query from the user.
+     * @param temperature Temperature of the model softmax, used to calibrate confidence estimation.
+     * @returns The predicted action from the model and its confidence.
      */
-    async predict(query: string, sampleSize: number = 1,
-        temperature: number = 1): Promise<{action: Action, confidence: number}> {
-        // If the prediction is done without sampling, dropout is disabled.
-        if (sampleSize === 1) {
-            this.lstm.dropout = 0;
-        } else {
-            this.lstm.dropout = this.lstmDropout;
-        }
+    async predict(query: string, temperature: number = 1):
+        Promise<{action: string, confidence: number}> {
+        // At inference, dropout is disabled
+        this.lstm.dropout = 0;
 
         const features = this.getOptimizableFeatures(await this.handleQuery(query));
         const masks = this.getActionMask();
 
-        const ys: tf.Tensor1D[] = [];
-        let prediction;
+        const prediction = this.lstm.predict(features, this.lstmC, this.lstmH, masks, temperature);
 
-        for (let i = 0; i < sampleSize; i += 1) {
-            tf.dispose(prediction);
-
-            prediction = this.lstm.predict(features, this.lstmC, this.lstmH, masks, temperature);
-            ys.push(prediction.y);
-        }
-
+        // Update lstm internal state
         tf.dispose([this.lstmC, this.lstmH]);
         this.lstmC = prediction.nc.clone();
         this.lstmH = prediction.nh.clone();
 
-        const { mean: y, variance } = tf.tidy(() => tf.moments(tf.stack(ys), 0));
+        const actionIdx = <number> tf.tidy(() => prediction.y.argMax().arraySync());
+        const confidence = <number> tf.tidy(() => prediction.y.arraySync()[actionIdx]);
 
-        const actionIdx = <number> tf.tidy(() => y.argMax().arraySync());
-        const confidence = <number> tf.tidy(() => y.sub(variance.sqrt()).arraySync()[actionIdx]);
-
-        tf.dispose([features, masks, y, variance]);
+        // Clear the memory
+        tf.dispose([features, masks]);
         tf.dispose(prediction);
-        tf.dispose(ys);
+
+        // Retablish dropout (just in case)
+        this.lstm.dropout = this.lstmDropout;
 
         this.handleAction(this.actions[actionIdx]);
 
@@ -371,17 +380,17 @@ export class HCN<Action> {
 
     /**
      * Evaluate the model using stories.
+     * @param stories Validation stories to evaluate the model.
+     * @param temperature Temperature of the model softmax, used to calibrate confidence estimation.
+     * @returns Validation metrics based on the results from the stories.
      */
-    async score(stories: Story[], sampleSize: number = 1,
-        temperature: number = 1): Promise<Metrics> {
+    async score(stories: Story[], temperature: number = 1): Promise<Metrics> {
         const targets: number[] = [];
         const predictions: number[] = [];
         const confidences: number[] = [];
         const failingSamples: number[] = [];
 
-        /*
-            For each stories and states, make predictions.
-         */
+        // For each stories and states, make predictions.
         for (let storyIdx = 0; storyIdx < stories.length; storyIdx += 1) {
             this.resetDialog();
 
@@ -389,9 +398,7 @@ export class HCN<Action> {
                 const state = stories[storyIdx][stateIdx];
 
                 // eslint-disable-next-line no-await-in-loop
-                const { action, confidence } = await this.predict(
-                    state.query, sampleSize, temperature
-                );
+                const { action, confidence } = await this.predict(state.query, temperature);
 
                 targets.push(this.actions.indexOf(state.action));
                 predictions.push(this.actions.indexOf(action));

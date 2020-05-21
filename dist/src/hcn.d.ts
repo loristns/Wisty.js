@@ -1,52 +1,57 @@
 import * as tf from '@tensorflow/tfjs';
 import { Featurizer } from './featurizer';
 import { Story } from './state';
-interface Metrics {
+import { Metrics } from './metrics';
+declare type TrainingCallback = (metrics: Metrics) => void;
+/**
+ * Parameters for HCN constructor.
+ */
+interface HCNConstructorArgs {
     /**
-     * Epoch of the training.
-     *
-     * Not defined for validation metrics.
+     * The list of actions the model can take.
+     * (keeping the order the same is important for pretrained models)
      */
-    epoch?: number;
+    actions: string[];
     /**
-     * Model's average loss.
-     *
-     * Only defined on training metrics.
+     * The list of featurizers the model uses.
+     * (keeping the order the same is important for pretrained models)
      */
-    loss?: number;
+    featurizers: Featurizer[];
     /**
-     * Accuracy of the model over the samples.
-     *
-     * Accuracy = proportion of correctly predicted samples.
+     * The output size of the LSTM cell.
+     * Default is set to 32 units.
      */
-    accuracy: number;
+    hiddenSize?: number;
     /**
-     * Recall of the model over the samples.
-     *
-     * Recall = (number of correctly assigned samples to a label) / (number of samples that belong
-     * to a label)
+     * The optimization algorithm used for training.
+     * By default, Adam with a learning rate of 0.01 is used.
      */
-    recall: number;
+    optimizer?: tf.Optimizer;
     /**
-     * Precision of the model over the samples.
-     *
-     * Precision = (number of correctly assigned samples to a label) / (number of samples assigned
-     * to a label)
+     * The percentage of units to dropout between the LSTM cell layer and the dense.
+     * Useful for regularizing the model. It's disabled by default (value = 0).
      */
-    precision: number;
-    /**
-     * Average confidence of the model in its prediction.
-     * Ideally, this value should be approximatively equal to the model's accuracy.
-     *
-     * Only defined for validation metrics.
-     */
-    averageConfidence?: number;
-    /**
-     * The array of the indexes of failling samples (< 0.999 accuracy).
-     */
-    failingSamples: number[];
+    dropout?: number;
 }
-declare type TrainingCallback = (metrics: Metrics) => any;
+/**
+ * Parameters for HCN train method.
+ */
+interface HCNTrainArgs {
+    /**
+     * Training stories to learn from.
+     */
+    stories: Story[];
+    /**
+     * Number of times the model will be passed the whole set of training stories during training.
+     * Default is set to 12 epochs.
+     */
+    nEpochs?: number;
+    /**
+     * After each epoch, this callback function will be executed with the metrics collected
+     * during the epoch.
+     */
+    onEpochEnd?: TrainingCallback;
+}
 /**
  * An implementation of Hybrid Code Networks(*) dialog manager.
  *
@@ -54,7 +59,7 @@ declare type TrainingCallback = (metrics: Metrics) => any;
  *      Hybrid Code Networks: practical and efﬁcient end-to-end dialog control with supervised
  *      and reinforcement learning.
  */
-export declare class HCN<Action> {
+export declare class HCN {
     private actions;
     private featurizers;
     private optimizer;
@@ -65,13 +70,17 @@ export declare class HCN<Action> {
     private lstmH;
     private lstmC;
     private lstmDropout;
-    constructor(actions: Action[], featurizers: Featurizer[], hiddenSize?: number, optimizer?: tf.Optimizer, dropout?: number);
     /**
-     * Initialize the model and it's featurizers.
+     * Defines the model.
+     * To fully initialize the model, run the async init() method.
+     */
+    constructor({ actions, featurizers, hiddenSize, optimizer, dropout }: HCNConstructorArgs);
+    /**
+     * Initialize the model and its featurizers.
      */
     init(): Promise<void>;
     /**
-     * Resets the state of the featurizers
+     * Resets the state of the model and its featurizers.
      */
     resetDialog(): void;
     /**
@@ -96,19 +105,28 @@ export declare class HCN<Action> {
     private fitStory;
     /**
      * Trains the model using the training stories.
+     *
+     * @returns Metrics collected from the last epoch (that correspond to the trained model).
      */
-    train(stories: Story[], nEpochs?: number, onEpochEnd?: TrainingCallback): Promise<Metrics>;
+    train({ stories, nEpochs, onEpochEnd }: HCNTrainArgs): Promise<Metrics>;
     /**
      * Predict an action resulting from the given query.
+     *
+     * @param query The given query from the user.
+     * @param temperature Temperature of the model softmax, used to calibrate confidence estimation.
+     * @returns The predicted action from the model and its confidence.
      */
-    predict(query: string, sampleSize?: number, temperature?: number): Promise<{
-        action: Action;
+    predict(query: string, temperature?: number): Promise<{
+        action: string;
         confidence: number;
     }>;
     /**
      * Evaluate the model using stories.
+     * @param stories Validation stories to evaluate the model.
+     * @param temperature Temperature of the model softmax, used to calibrate confidence estimation.
+     * @returns Validation metrics based on the results from the stories.
      */
-    score(stories: Story[], sampleSize?: number, temperature?: number): Promise<Metrics>;
+    score(stories: Story[], temperature?: number): Promise<Metrics>;
     /**
      * Load the models parameters from a JSON formatted string.
      */

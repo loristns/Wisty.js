@@ -122,12 +122,11 @@
             30
         );
 
-        const ai = new wisty.HCN(
-            ['introduce', 'sayHello', 'askForDetails', 'solved', 'sayGoodbye', 'checkSpell', 'resetPassword', 'retryReset', 'callSupport', 'LUS'],
-            [passwordRules, actionRules, bow, fasttext],
-            // Hidden size: 16, optimized by Adam, no dropout.
-            16, tf.train.adam(0.01), 0
-        );
+        const ai = new wisty.HCN({
+            actions: ['introduce', 'sayHello', 'askForDetails', 'solved', 'sayGoodbye', 'checkSpell', 'resetPassword', 'retryReset', 'callSupport', 'LUS'],
+            featurizers: [passwordRules, actionRules, bow, fasttext],
+            hiddenSize: 16
+        });
 
         const temperature = 2;
     
@@ -199,10 +198,14 @@
             const stories = wisty.parseStories(source);
             const { train: trainStories, test: testStories } = wisty.trainTestSplit(stories, 0.2);
 
-            await ai.train(trainStories, 25, (metrics) => console.log('Train', metrics));
+            await ai.train({
+                stories: trainStories,
+                nEpochs: 25,
+                onEpochEnd: (metrics) => console.log('Train', metrics)
+            });
 
             console.log('Test set', testStories);
-            console.log('Test', await ai.score(testStories, 1, temperature));
+            console.log('Test', await ai.score(testStories, temperature));
 
             await botui.message.removeAll();
 
@@ -266,7 +269,7 @@
             if (query.value === '/reset') { 
                 await resetDialog();
             } else {
-                let { action, confidence } = await ai.predict(query.value, 1, temperature);
+                let { action, confidence } = await ai.predict(query.value, temperature);
 
                 while (action !== 'LUS') {
                     if (confidence < 0.5) {
@@ -307,7 +310,7 @@
                         }
                     }
 
-                    ({ action, confidence } = await ai.predict('', 1, temperature));
+                    ({ action, confidence } = await ai.predict('', temperature));
                 }
             }
 

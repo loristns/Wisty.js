@@ -4,7 +4,7 @@
  */
 export interface State {
     query: string;
-    action: any;
+    action: string;
 }
 /**
  * A whole conversation (array of states).
