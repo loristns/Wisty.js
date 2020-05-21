@@ -1,6 +1,26 @@
 import * as tf from '@tensorflow/tfjs';
 import { Featurizer } from './featurizer';
 /**
+ * Parameters for ActionFeaturizer constructor.
+ */
+interface ActionFeaturizerArgs {
+    /**
+     * Enable the masking of LUS when the user has just talked.
+     * Enabled by default.
+     */
+    maskLUS?: boolean;
+    /**
+     * Enable the masking of the previous action.
+     * Enabled by default.
+     */
+    maskPreviousAction?: boolean;
+    /**
+     * The action the bot takes to let the user talk.
+     * Default to 'LUS' (acronym for Let User Speak)
+     */
+    LUSAction?: string;
+}
+/**
  * Rule-based featurizer improving model robustness.
  *
  * - Featurize the previous action the model has taken.
@@ -18,12 +38,7 @@ export declare class ActionFeaturizer extends Featurizer {
     private userTalked;
     private previousAction;
     private embeddings;
-    /**
-     * @param maskLUS Enable the masking of LUS when the user has just talked
-     * @param maskPreviousAction Enable the masking of the previous action
-     * @param LUSAction The action the bot takes to let the user talk
-     */
-    constructor(maskLUS?: boolean, maskPreviousAction?: boolean, LUSAction?: any);
+    constructor({ maskLUS, maskPreviousAction, LUSAction }?: ActionFeaturizerArgs);
     init(actions: any[]): Promise<void>;
     handleQuery(query: string): Promise<tf.Tensor2D>;
     getOptimizableFeatures(data: tf.Tensor2D): tf.Tensor1D;
@@ -37,3 +52,4 @@ export declare class ActionFeaturizer extends Featurizer {
         embeddings: number[][];
     }>;
 }
+export {};

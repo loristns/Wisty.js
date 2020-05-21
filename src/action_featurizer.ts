@@ -3,6 +3,29 @@ import { Featurizer } from './featurizer';
 import { initializeVariable } from './utils/initialize_variable';
 
 /**
+ * Parameters for ActionFeaturizer constructor.
+ */
+interface ActionFeaturizerArgs {
+    /**
+     * Enable the masking of LUS when the user has just talked.
+     * Enabled by default.
+     */
+    maskLUS?: boolean;
+
+    /**
+     * Enable the masking of the previous action.
+     * Enabled by default.
+     */
+    maskPreviousAction?: boolean;
+
+    /**
+     * The action the bot takes to let the user talk.
+     * Default to 'LUS' (acronym for Let User Speak)
+     */
+    LUSAction?: string;
+}
+
+/**
  * Rule-based featurizer improving model robustness.
  *
  * - Featurize the previous action the model has taken.
@@ -24,13 +47,11 @@ export class ActionFeaturizer extends Featurizer {
 
     private embeddings: tf.Tensor;
 
-    /**
-     * @param maskLUS Enable the masking of LUS when the user has just talked
-     * @param maskPreviousAction Enable the masking of the previous action
-     * @param LUSAction The action the bot takes to let the user talk
-     */
-    constructor(maskLUS: boolean = true,
-        maskPreviousAction: boolean = true, LUSAction: any = 'LUS') {
+    constructor({
+        maskLUS = true,
+        maskPreviousAction = true,
+        LUSAction = 'LUS'
+    }: ActionFeaturizerArgs = { maskLUS: true, maskPreviousAction: true, LUSAction: 'LUS' }) {
         super();
         this.maskLUS = maskLUS;
         this.maskPreviousAction = maskPreviousAction;
