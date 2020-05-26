@@ -1,8 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
-import { Featurizer } from './featurizer';
-import { LSTM } from './lstm';
-import { Story } from './state';
-import { Metrics } from './metrics';
+import { Featurizer } from '../featurizers';
+import { LSTM, Story, Metrics } from '../utils';
 
 interface SampleData {
     targets: tf.Tensor1D,

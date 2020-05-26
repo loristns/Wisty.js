@@ -1,4 +1,4 @@
-import { Story, State } from '../state';
+import { Story, State } from '../utils';
 
 /**
  * Parse a source string formatted according the Wisty Training Story syntax.

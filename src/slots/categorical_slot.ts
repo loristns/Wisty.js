@@ -1,7 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
-import { Featurizer } from './featurizer';
-import { fuzzyMatch } from './utils/fuzzy_match';
-import { hashcode } from './utils/hashcode';
+import { Featurizer } from '../featurizers';
+import { fuzzyMatch, hashcode } from '../utils';
 
 type Categories = {[category: string]: string[]};
 type Value = { category: string, extract: string, score: number };

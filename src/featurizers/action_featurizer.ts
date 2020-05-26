@@ -1,6 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import { Featurizer } from './featurizer';
-import { initializeVariable } from './utils/initialize_variable';
+import { initializeVariable } from '../utils';
 
 /**
  * Parameters for ActionFeaturizer constructor.

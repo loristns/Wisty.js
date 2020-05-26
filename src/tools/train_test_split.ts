@@ -1,4 +1,4 @@
-import { Story } from '../state';
+import { Story } from '../utils';
 
 /**
  * Split a list of stories into random train and test subsets.

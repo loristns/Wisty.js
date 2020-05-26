@@ -1,6 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import { Featurizer } from './featurizer';
-import { hashcode } from './utils/hashcode';
+import { hashcode } from '../utils';
 
 /**
  * Featurizes queries as bag of words.

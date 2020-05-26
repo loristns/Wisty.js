@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
-import { Featurizer } from './featurizer';
+import { Featurizer } from '../featurizers';
 declare type Categories = {
     [category: string]: string[];
 };

@@ -1,7 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
-import { Featurizer } from './featurizer';
-import { Story } from './state';
-import { Metrics } from './metrics';
+import { Featurizer } from '../featurizers';
+import { Story, Metrics } from '../utils';
 declare type TrainingCallback = (metrics: Metrics) => void;
 /**
  * Parameters for HCN constructor.

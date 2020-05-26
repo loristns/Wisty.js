@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
-import { initializeVariable } from './utils/initialize_variable';
+import { initializeVariable } from './initialize_variable';
 
 type LSTMPrediction = {y: tf.Tensor1D, nc: tf.Tensor2D, nh: tf.Tensor2D};
 

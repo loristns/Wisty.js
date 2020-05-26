@@ -55,7 +55,7 @@
         /**
          * These rules makes sure the bot introduce just once and send two mails maximum.
          */
-        class PasswordRules extends wisty.Featurizer {
+        class PasswordRules extends wisty.featurizers.Featurizer {
             constructor() {
                 super();
                 this.id = 'PasswordRules';
@@ -112,17 +112,17 @@
 
         // Define the AI
         const passwordRules = new PasswordRules();
-        const actionRules = new wisty.ActionFeaturizer();
+        const actionRules = new wisty.featurizers.ActionFeaturizer();
 
-        // const use = new wisty.USE();
+        // const use = new wisty.featurizers.USE();
 
-        const bow = new wisty.BOW(100);
-        const fasttext = new wisty.WordEmbedding(
+        const bow = new wisty.featurizers.BOW(100);
+        const fasttext = new wisty.featurizers.WordEmbedding(
             async () => await fetch('./fasttext_light_en_30.json').then((response) => response.text()),
             30
         );
 
-        const ai = new wisty.HCN({
+        const ai = new wisty.models.HCN({
             actions: ['introduce', 'sayHello', 'askForDetails', 'solved', 'sayGoodbye', 'checkSpell', 'resetPassword', 'retryReset', 'callSupport', 'LUS'],
             featurizers: [passwordRules, actionRules, bow, fasttext],
             hiddenSize: 16
@@ -195,8 +195,8 @@
             // Or train the model from scratch :
             const source = await fetch('./index.md').then((response) => response.text());
 
-            const stories = wisty.parseStories(source);
-            const { train: trainStories, test: testStories } = wisty.trainTestSplit(stories, 0.2);
+            const stories = wisty.tools.parseStories(source);
+            const { train: trainStories, test: testStories } = wisty.tools.trainTestSplit(stories, 0.2);
 
             await ai.train({
                 stories: trainStories,

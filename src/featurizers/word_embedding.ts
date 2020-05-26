@@ -1,6 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import { Featurizer } from './featurizer';
-import { levenshteinDistance } from './utils/levenshtein_distance';
+import { levenshteinDistance } from '../utils';
 
 /**
  * Featurize queries by pooling words embedding using SWEM-concat(*).
