@@ -27,6 +27,11 @@ interface HCNConstructorArgs {
      */
     optimizer?: tf.Optimizer;
     /**
+     * Temperature of the model softmax, used to calibrate confidence estimation.
+     * By default, the temperature is 1 but you usually want it higher to make less overconfident.
+     */
+    temperature?: number;
+    /**
      * The percentage of units to dropout between the LSTM cell layer and the dense.
      * Useful for regularizing the model. It's disabled by default (value = 0).
      */
@@ -68,12 +73,13 @@ export declare class HCN {
     private lstm;
     private lstmH;
     private lstmC;
+    private lstmTemperature;
     private lstmDropout;
     /**
      * Defines the model.
      * To fully initialize the model, run the async init() method.
      */
-    constructor({ actions, featurizers, hiddenSize, optimizer, dropout }: HCNConstructorArgs);
+    constructor({ actions, featurizers, hiddenSize, optimizer, temperature, dropout }: HCNConstructorArgs);
     /**
      * Initialize the model and its featurizers.
      */
@@ -112,20 +118,18 @@ export declare class HCN {
      * Predict an action resulting from the given query.
      *
      * @param query The given query from the user.
-     * @param temperature Temperature of the model softmax, used to calibrate confidence estimation.
      * @returns The predicted action from the model and its confidence.
      */
-    predict(query: string, temperature?: number): Promise<{
+    predict(query: string): Promise<{
         action: string;
         confidence: number;
     }>;
     /**
      * Evaluate the model using stories.
      * @param stories Validation stories to evaluate the model.
-     * @param temperature Temperature of the model softmax, used to calibrate confidence estimation.
      * @returns Validation metrics based on the results from the stories.
      */
-    score(stories: Story[], temperature?: number): Promise<Metrics>;
+    score(stories: Story[]): Promise<Metrics>;
     /**
      * Load the models parameters from a JSON formatted string.
      */

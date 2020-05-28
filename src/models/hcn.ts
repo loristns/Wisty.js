@@ -40,6 +40,12 @@ interface HCNConstructorArgs {
     optimizer?: tf.Optimizer;
 
     /**
+     * Temperature of the model softmax, used to calibrate confidence estimation.
+     * By default, the temperature is 1 but you usually want it higher to make less overconfident.
+     */
+    temperature?: number;
+
+    /**
      * The percentage of units to dropout between the LSTM cell layer and the dense.
      * Useful for regularizing the model. It's disabled by default (value = 0).
      */
@@ -87,6 +93,7 @@ export class HCN {
     private lstm: LSTM;
     private lstmH: tf.Tensor2D;
     private lstmC: tf.Tensor2D;
+    private lstmTemperature: number;
     private lstmDropout: number;
 
     /**
@@ -98,6 +105,7 @@ export class HCN {
         featurizers,
         hiddenSize = 32,
         optimizer = tf.train.adam(0.01),
+        temperature = 1,
         dropout = 0
     }: HCNConstructorArgs) {
         this.actions = actions;
@@ -107,6 +115,7 @@ export class HCN {
         this.hiddenSize = hiddenSize;
         this.outputSize = actions.length;
 
+        this.lstmTemperature = temperature;
         this.lstmDropout = dropout;
     }
 
@@ -343,10 +352,9 @@ export class HCN {
      * Predict an action resulting from the given query.
      *
      * @param query The given query from the user.
-     * @param temperature Temperature of the model softmax, used to calibrate confidence estimation.
      * @returns The predicted action from the model and its confidence.
      */
-    async predict(query: string, temperature: number = 1):
+    async predict(query: string):
         Promise<{action: string, confidence: number}> {
         // At inference, dropout is disabled
         this.lstm.dropout = 0;
@@ -354,7 +362,9 @@ export class HCN {
         const features = this.getOptimizableFeatures(await this.handleQuery(query));
         const masks = this.getActionMask();
 
-        const prediction = this.lstm.predict(features, this.lstmC, this.lstmH, masks, temperature);
+        const prediction = this.lstm.predict(
+            features, this.lstmC, this.lstmH, masks, this.lstmTemperature
+        );
 
         // Update lstm internal state
         tf.dispose([this.lstmC, this.lstmH]);
@@ -379,10 +389,9 @@ export class HCN {
     /**
      * Evaluate the model using stories.
      * @param stories Validation stories to evaluate the model.
-     * @param temperature Temperature of the model softmax, used to calibrate confidence estimation.
      * @returns Validation metrics based on the results from the stories.
      */
-    async score(stories: Story[], temperature: number = 1): Promise<Metrics> {
+    async score(stories: Story[]): Promise<Metrics> {
         const targets: number[] = [];
         const predictions: number[] = [];
         const confidences: number[] = [];
@@ -396,7 +405,7 @@ export class HCN {
                 const state = stories[storyIdx][stateIdx];
 
                 // eslint-disable-next-line no-await-in-loop
-                const { action, confidence } = await this.predict(state.query, temperature);
+                const { action, confidence } = await this.predict(state.query);
 
                 targets.push(this.actions.indexOf(state.action));
                 predictions.push(this.actions.indexOf(action));

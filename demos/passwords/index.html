@@ -125,10 +125,9 @@
         const ai = new wisty.models.HCN({
             actions: ['introduce', 'sayHello', 'askForDetails', 'solved', 'sayGoodbye', 'checkSpell', 'resetPassword', 'retryReset', 'callSupport', 'LUS'],
             featurizers: [passwordRules, actionRules, bow, fasttext],
-            hiddenSize: 16
+            hiddenSize: 16,
+            temperature: 2
         });
-
-        const temperature = 2;
     
         // UI logic
         let botui = new BotUI('chat-ui');
@@ -205,7 +204,7 @@
             });
 
             console.log('Test set', testStories);
-            console.log('Test', await ai.score(testStories, temperature));
+            console.log('Test', await ai.score(testStories));
 
             await botui.message.removeAll();
 
@@ -269,7 +268,7 @@
             if (query.value === '/reset') { 
                 await resetDialog();
             } else {
-                let { action, confidence } = await ai.predict(query.value, temperature);
+                let { action, confidence } = await ai.predict(query.value);
 
                 while (action !== 'LUS') {
                     if (confidence < 0.5) {
@@ -310,7 +309,7 @@
                         }
                     }
 
-                    ({ action, confidence } = await ai.predict('', temperature));
+                    ({ action, confidence } = await ai.predict(''));
                 }
             }
 
