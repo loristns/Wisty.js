@@ -1,37 +1,61 @@
 import * as tf from '@tensorflow/tfjs';
-import { Featurizer } from '../featurizers';
+import { Slot } from './slot';
 import { fuzzyMatch, hashcode } from '../utils';
 
 type Categories = {[category: string]: string[]};
-type Value = { category: string, extract: string, score: number };
+type CategoricalValue = { category: string, extract: string, score: number };
 
-export class CategoricalSlot extends Featurizer {
+/**
+ * Parameters for Categorical Slot constructor.
+ */
+interface CategoricalSlotArgs {
+    /**
+     * An object with the name of the category as a key and an array of synonyms that belong to
+     * the category as a value.
+     */
+    categories: Categories;
+
+    /**
+     * The list of actions that can be taken by the model only when the slot is defined.
+     */
+    dependantActions?: String[];
+
+    /**
+     * The list of actions that can be taken by the model only when the slot is undefined.
+     */
+    invDependantActions?: String[];
+
+    /**
+     * The minimum similarity to get selected as a value. (based on Leveinshtein Distance)
+     */
+    threshold?: number;
+}
+
+/**
+ * A slot that stores a categorical value extracted using fuzzy string matching.
+ */
+export class CategoricalSlot extends Slot<CategoricalValue> {
     readonly id: string;
     readonly size: number;
 
     private categoryNames: string[];
     private categories: Categories;
 
-    private dependantActions: any[];
-    private inverselyDependantActions: any[];
-
     private threshold: number;
-    private value: Value;
 
-    constructor(categories: Categories, dependantActions: any[] = [],
-        inverselyDependantActions: any[] = [], threshold: number = 0.75) {
-        super();
+    constructor({
+        categories,
+        dependantActions = [],
+        invDependantActions = [],
+        threshold = 0.75
+    }: CategoricalSlotArgs) {
+        super(dependantActions, invDependantActions);
 
         this.categoryNames = Object.keys(categories);
         this.categories = categories;
-
-        this.id = `Categorical Slot (${hashcode(JSON.stringify(this.categoryNames))})`;
-
-        this.dependantActions = dependantActions;
-        this.inverselyDependantActions = inverselyDependantActions;
-
         this.threshold = threshold;
 
+        this.id = `Categorical Slot #${hashcode(JSON.stringify(this.categoryNames))}`;
         this.size = 2 * this.categoryNames.length;
     }
 
@@ -40,7 +64,7 @@ export class CategoricalSlot extends Featurizer {
         this.resetDialog();
     }
 
-    private featurizeValue(value: Value): tf.Tensor1D {
+    private oneHotValue(value: CategoricalValue): tf.Tensor1D {
         const categoryNames = Object.keys(this.categories);
 
         return <tf.Tensor1D> tf.oneHot(
@@ -50,19 +74,22 @@ export class CategoricalSlot extends Featurizer {
     }
 
     async handleQuery(query: string): Promise<tf.Tensor1D> {
-        let bestValue: Value = { category: undefined, extract: undefined, score: 0 };
+        let bestValue: CategoricalValue = { category: undefined, extract: undefined, score: 0 };
 
+        // For each category...
         Object.entries(this.categories).forEach(([category, keywords]) => {
-            // Find the best match of one category.
+            // Find the best match of the category.
             const match = keywords
                 .map((keyword) => fuzzyMatch(query.toLowerCase(), keyword.toLowerCase()))
+
                 .filter((m) => m.score >= this.threshold)
+
                 .reduce(
                     (hm, m) => (hm.score > m.score ? hm : m),
                     { extract: undefined, score: 0 }
                 );
 
-            // If this match is the best of every categories.
+            // Check if this match is the best of every categories.
             if (match.score > bestValue.score) {
                 bestValue = { category, ...match };
             }
@@ -70,33 +97,23 @@ export class CategoricalSlot extends Featurizer {
 
         const features = tf.tidy(() => (
             tf.concat([
-                this.featurizeValue(bestValue),
-                this.featurizeValue(this.value)
+                this.oneHotValue(bestValue),
+                this.oneHotValue(this.getValue())
             ])
         ));
 
         if (bestValue.category !== undefined) {
-            this.value = bestValue;
+            this.setValue(bestValue);
         }
 
         return features;
     }
 
-    getActionMask(): boolean[] {
-        return this.actions.map((action) => {
-            const u = this.value.extract === undefined;
-            const d = this.dependantActions.includes(action);
-            const i = this.inverselyDependantActions.includes(action);
+    getValue(): CategoricalValue {
+        if (super.getValue() === undefined) {
+            return { category: undefined, extract: undefined, score: 0 };
+        }
 
-            return (u && (i || !d)) || (!u && !i);
-        });
-    }
-
-    resetDialog() {
-        this.value = { category: undefined, extract: undefined, score: 0 };
-    }
-
-    getValue(): Value {
-        return this.value;
+        return super.getValue();
     }
 }
