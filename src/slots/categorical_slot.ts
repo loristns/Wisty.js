@@ -1,6 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import { Slot } from './slot';
-import { fuzzyMatch, hashcode } from '../utils';
+import { fuzzyMatch } from '../utils';
 
 type Categories = {[category: string]: string[]};
 type CategoricalValue = { category: string, extract: string, score: number };
@@ -10,6 +10,11 @@ type CategoricalValue = { category: string, extract: string, score: number };
  */
 interface CategoricalSlotArgs {
     /**
+     * The name of the slot.
+     */
+    name: string;
+
+    /**
      * An object with the name of the category as a key and an array of synonyms that belong to
      * the category as a value.
      */
@@ -18,12 +23,12 @@ interface CategoricalSlotArgs {
     /**
      * The list of actions that can be taken by the model only when the slot is defined.
      */
-    dependantActions?: String[];
+    dependantActions?: string[];
 
     /**
      * The list of actions that can be taken by the model only when the slot is undefined.
      */
-    invDependantActions?: String[];
+    invDependantActions?: string[];
 
     /**
      * The minimum similarity to get selected as a value. (based on Leveinshtein Distance)
@@ -44,6 +49,7 @@ export class CategoricalSlot extends Slot<CategoricalValue> {
     private threshold: number;
 
     constructor({
+        name,
         categories,
         dependantActions = [],
         invDependantActions = [],
@@ -55,7 +61,7 @@ export class CategoricalSlot extends Slot<CategoricalValue> {
         this.categories = categories;
         this.threshold = threshold;
 
-        this.id = `Categorical Slot #${hashcode(JSON.stringify(this.categoryNames))}`;
+        this.id = `${name}#Categorical`;
         this.size = 2 * this.categoryNames.length;
     }
 

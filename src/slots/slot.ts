@@ -7,19 +7,19 @@ export abstract class Slot<Value> extends Featurizer {
     /**
      * The list of actions that can be taken by the model only when the slot is defined.
      */
-    private dependantActions: String[];
+    private dependantActions: string[];
 
     /**
      * The list of actions that can be taken by the model only when the slot is undefined.
      */
-    private invDependantActions: String[];
+    private invDependantActions: string[];
 
     /**
      * Stores the value of the slot.
      */
     private value: Value;
 
-    constructor(dependantActions: String[], invDependantActions: String[]) {
+    constructor(dependantActions: string[], invDependantActions: string[]) {
         super();
         this.dependantActions = dependantActions;
         this.invDependantActions = invDependantActions;

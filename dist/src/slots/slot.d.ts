@@ -15,7 +15,7 @@ export declare abstract class Slot<Value> extends Featurizer {
      * Stores the value of the slot.
      */
     private value;
-    constructor(dependantActions: String[], invDependantActions: String[]);
+    constructor(dependantActions: string[], invDependantActions: string[]);
     /**
      * Produce an action mask according to the dependant actions.
      */

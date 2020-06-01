@@ -13,6 +13,10 @@ declare type CategoricalValue = {
  */
 interface CategoricalSlotArgs {
     /**
+     * The name of the slot.
+     */
+    name: string;
+    /**
      * An object with the name of the category as a key and an array of synonyms that belong to
      * the category as a value.
      */
@@ -20,23 +24,26 @@ interface CategoricalSlotArgs {
     /**
      * The list of actions that can be taken by the model only when the slot is defined.
      */
-    dependantActions?: String[];
+    dependantActions?: string[];
     /**
      * The list of actions that can be taken by the model only when the slot is undefined.
      */
-    invDependantActions?: String[];
+    invDependantActions?: string[];
     /**
      * The minimum similarity to get selected as a value. (based on Leveinshtein Distance)
      */
     threshold?: number;
 }
+/**
+ * A slot that stores a categorical value extracted using fuzzy string matching.
+ */
 export declare class CategoricalSlot extends Slot<CategoricalValue> {
     readonly id: string;
     readonly size: number;
     private categoryNames;
     private categories;
     private threshold;
-    constructor({ categories, dependantActions, invDependantActions, threshold }: CategoricalSlotArgs);
+    constructor({ name, categories, dependantActions, invDependantActions, threshold }: CategoricalSlotArgs);
     init(actions: any[]): Promise<void>;
     private oneHotValue;
     handleQuery(query: string): Promise<tf.Tensor1D>;
