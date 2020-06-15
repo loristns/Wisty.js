@@ -59,20 +59,11 @@
             constructor() {
                 super();
                 this.id = 'PasswordRules';
-                this.size = 3;
             }
 
             init(actions) {
                 super.init(actions);
                 this.resetDialog();
-            }
-
-            handleQuery(query) {
-                return tf.tensor([
-                    this.hasIntroduced ? 1 : 0,
-                    this.hasSendedFirstMail ? 1 : 0,
-                    this.hasSendedSecondMail ? 1 : 0
-                ]);
             }
 
             handleAction(action) {

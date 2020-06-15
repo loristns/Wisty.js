@@ -4,8 +4,9 @@ type JSONSerializable = {[key: string]: any};
 
 /**
  * A stateful featurizer that turns queries into numerical representations.
+ * @abstract
  */
-export abstract class Featurizer {
+export class Featurizer {
     /**
      * An ID used by models for exportations.
      */
@@ -18,8 +19,9 @@ export abstract class Featurizer {
 
     /**
      * The size of the vector returned by the featurizer.
+     * By default it's set to 1 which is the default for a featurizer that returns no features.
      */
-    readonly size: number;
+    readonly size: number = 1;
 
     /**
      * Initialize the model, can be asynchronous async code.
@@ -36,9 +38,10 @@ export abstract class Featurizer {
      * This method can directly return a 1D tensor to provide features to the model.
      * Alternatively, it can returns data of any type if the Featurizer implement a custom
      * getOptimizableFeatures method to handle those data.
-     * @async
+     * If this method doesn't return something, no features will be passed to the model.
      */
-    abstract handleQuery(query: string): Promise<any>;
+    // eslint-disable-next-line no-unused-vars, class-methods-use-this, no-empty-function
+    async handleQuery(query: string): Promise<any> {}
 
     /**
      * Turn the data returned by handleQuery into an embedding vector.
@@ -53,6 +56,10 @@ export abstract class Featurizer {
      */
     // eslint-disable-next-line class-methods-use-this
     getOptimizableFeatures(data: any): tf.Tensor1D {
+        if (data === undefined) {
+            return tf.zeros([1]);
+        }
+
         return <tf.Tensor1D> data;
     }
 

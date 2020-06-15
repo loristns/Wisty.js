@@ -4,8 +4,9 @@ declare type JSONSerializable = {
 };
 /**
  * A stateful featurizer that turns queries into numerical representations.
+ * @abstract
  */
-export declare abstract class Featurizer {
+export declare class Featurizer {
     /**
      * An ID used by models for exportations.
      */
@@ -16,6 +17,7 @@ export declare abstract class Featurizer {
     protected actions: any[];
     /**
      * The size of the vector returned by the featurizer.
+     * By default it's set to 1 which is the default for a featurizer that returns no features.
      */
     readonly size: number;
     /**
@@ -30,9 +32,9 @@ export declare abstract class Featurizer {
      * This method can directly return a 1D tensor to provide features to the model.
      * Alternatively, it can returns data of any type if the Featurizer implement a custom
      * getOptimizableFeatures method to handle those data.
-     * @async
+     * If this method doesn't return something, no features will be passed to the model.
      */
-    abstract handleQuery(query: string): Promise<any>;
+    handleQuery(query: string): Promise<any>;
     /**
      * Turn the data returned by handleQuery into an embedding vector.
      * This function is used to expose featurizer variables to the model optimizer for training.

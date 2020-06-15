@@ -2,8 +2,9 @@ import { Featurizer } from '../featurizers';
 
 /**
  * An extension of featurizer that holds a value in its state.
+ * @abstract
  */
-export abstract class Slot<Value> extends Featurizer {
+export class Slot<Value> extends Featurizer {
     /**
      * The list of actions that can be taken by the model only when the slot is defined.
      */
