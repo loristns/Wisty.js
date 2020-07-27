@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisty.js Restaurant Demo</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/botui/build/botui.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/botui/build/botui-theme-default.css"/>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <section id="chat-ui">
+            <bot-ui></bot-ui>
+        </section>
+
+        <section>
+            <h2>Your order</h2>
+
+            <ul>
+                <li>Starter : <span id="order-starter"></span></li>
+                <li>Main dish : <span id="order-main"></span></li>
+                <li>Dessert : <span id="order-dessert"></span></li>
+                <li>Additional points : <span id="order-additional"></span></li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Turn NLU</h2>
+
+            <pre id="nlu-area">
+
+            </pre>
+        </section>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/vue/latest/vue.min.js"></script>
+    <script src="https://unpkg.com/botui/build/botui.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
+
+    <script src="../../dist/wisty.umd.js"></script>
+
+    <script src="./product_slot.js"></script>
+    <script src="./restaurant_featurizer.js"></script>
+    <script src="./bot.js"></script>
+</body>
+</html>
