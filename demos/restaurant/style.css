@@ -1,0 +1,8 @@
+.container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.container section {
+    max-width: 30%;
+}
