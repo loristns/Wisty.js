@@ -160,3 +160,5 @@ async function main() {
 
     await chat();
 }
+
+main();
