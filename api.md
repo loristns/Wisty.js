@@ -1,5 +1,7 @@
 # Wisty.js API Draft
 
+*This document is not updated*
+
 ## Models
 
 Models are the brain of the conversational interface, they predicts actions based on text input.
