@@ -9,6 +9,9 @@ interface SampleData {
     isFailing: boolean
 }
 
+/**
+ * @callback
+ */
 type TrainingCallback = (metrics: Metrics) => void;
 
 /**
@@ -98,7 +101,8 @@ export class HCN {
 
     /**
      * Defines the model.
-     * To fully initialize the model, run the async init() method.
+     *
+     * To fully initialize the model, run the async *init()* method.
      */
     constructor({
         actions,
@@ -273,7 +277,6 @@ export class HCN {
         return data;
     }
 
-
     /**
      * Trains the model using the training stories.
      *
@@ -388,6 +391,7 @@ export class HCN {
 
     /**
      * Evaluate the model using stories.
+     *
      * @param stories Validation stories to evaluate the model.
      * @returns Validation metrics based on the results from the stories.
      */

@@ -16,7 +16,7 @@ interface ActionFeaturizerArgs {
     maskPreviousAction?: boolean;
     /**
      * The action the bot takes to let the user talk.
-     * Default to 'LUS' (acronym for Let User Speak)
+     * Default to 'LUS' (acronym for Let User Speak).
      */
     LUSAction?: string;
 }

@@ -18,7 +18,7 @@ export class WordEmbedding extends Featurizer {
     private vectors: {[word: string]: number[]};
 
     /**
-     * @param loaderFunction A function that loads the json string containing the embedding.
+     * @param loaderFunction A function that returns the json string containing the embedding.
      * @param size The dimension of the word embedding
      */
     constructor(loaderFunction: () => Promise<string>, size: number) {

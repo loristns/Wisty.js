@@ -33,7 +33,7 @@ interface NLUDigest {
     };
 }
 /**
- * An utility class using HCN methods and Slots and building an higher level API
+ * An utility class using HCN methods and Slots to offer an higher level API
  * looking like NLU librairies.
  */
 export declare class NLUFormatter {

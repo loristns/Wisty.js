@@ -4,6 +4,7 @@ type JSONSerializable = {[key: string]: any};
 
 /**
  * A stateful featurizer that turns queries into numerical representations.
+ *
  * @abstract
  */
 export class Featurizer {
@@ -25,6 +26,7 @@ export class Featurizer {
 
     /**
      * Initialize the model, can be asynchronous async code.
+     *
      * This method is executed by the model during it's initialization,
      * it will also set the actions attribute.
      */
@@ -35,6 +37,7 @@ export class Featurizer {
     /**
      * Featurizes and handle a text query.
      *
+     * @remarks
      * This method can directly return a 1D tensor to provide features to the model.
      * Alternatively, it can returns data of any type if the Featurizer implement a custom
      * getOptimizableFeatures method to handle those data.
@@ -51,6 +54,7 @@ export class Featurizer {
      * through gradient descent.
      * In this case, just return the feature vector directly using the handleQuery method.
      *
+     * @remarks
      * It's important to keep this function stateless, it should only depend of its tensor argument
      * and of featurizer's variables.
      */

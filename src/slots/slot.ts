@@ -20,15 +20,18 @@ export class Slot<Value> extends Featurizer {
      */
     private value: Value;
 
+    /**
+     * @param dependantActions The list of actions that can be taken by the model
+     *                         only when the slot is defined.
+     * @param invDependantActions The list of actions that can be taken by the model
+     *                            only when the slot is undefined.
+     */
     constructor(dependantActions: string[], invDependantActions: string[]) {
         super();
         this.dependantActions = dependantActions;
         this.invDependantActions = invDependantActions;
     }
 
-    /**
-     * Produce an action mask according to the dependant actions.
-     */
     getActionMask(): boolean[] {
         return this.actions.map((action) => {
             const isDefined = this.value !== undefined;

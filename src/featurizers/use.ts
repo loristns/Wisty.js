@@ -13,9 +13,6 @@ export class USE extends Featurizer {
 
     readonly size = 512;
 
-    /**
-     * Initializes the Universal Sentence Encoder model.
-     */
     async init(actions: any[]) {
         await super.init(actions);
         this.encoder = await use.load();
@@ -35,9 +32,6 @@ export class USE extends Featurizer {
         return squeezedEmbed;
     }
 
-    /**
-     * @return A tensor of shape [512].
-     */
     async handleQuery(query: string): Promise<tf.Tensor1D> {
         // When the query is empty, return the cached empty query encoding.
         if (!query) {

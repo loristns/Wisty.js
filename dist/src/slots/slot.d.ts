@@ -16,10 +16,13 @@ export declare class Slot<Value> extends Featurizer {
      * Stores the value of the slot.
      */
     private value;
-    constructor(dependantActions: string[], invDependantActions: string[]);
     /**
-     * Produce an action mask according to the dependant actions.
+     * @param dependantActions The list of actions that can be taken by the model
+     *                         only when the slot is defined.
+     * @param invDependantActions The list of actions that can be taken by the model
+     *                            only when the slot is undefined.
      */
+    constructor(dependantActions: string[], invDependantActions: string[]);
     getActionMask(): boolean[];
     resetDialog(): void;
     /**

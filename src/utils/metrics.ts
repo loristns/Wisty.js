@@ -1,3 +1,6 @@
+/**
+ * Some metrics about how a model is performing during training or at validation.
+ */
 export interface Metrics {
     /**
      * Epoch of the training.
@@ -5,18 +8,21 @@ export interface Metrics {
      * Not defined for validation metrics.
      */
     epoch?: number;
+
     /**
      * Model's average loss.
      *
      * Only defined on training metrics.
      */
     loss?: number;
+
     /**
      * Accuracy of the model over the samples.
      *
      * Accuracy = proportion of correctly predicted samples.
      */
     accuracy: number;
+
     /**
      * Recall of the model over the samples.
      *
@@ -24,6 +30,7 @@ export interface Metrics {
      * to a label)
      */
     recall: number;
+
     /**
      * Precision of the model over the samples.
      *
@@ -31,6 +38,7 @@ export interface Metrics {
      * to a label)
      */
     precision: number;
+
     /**
      * Average confidence of the model in its prediction.
      * Ideally, this value should be approximatively equal to the model's accuracy.
@@ -38,6 +46,7 @@ export interface Metrics {
      * Only defined for validation metrics.
      */
     averageConfidence?: number;
+
     /**
      * The array of the indexes of failling samples (< 0.999 accuracy).
      */

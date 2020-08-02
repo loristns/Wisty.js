@@ -8,16 +8,10 @@ export declare class USE extends Featurizer {
     private encoder;
     private emptyEncoding;
     readonly size = 512;
-    /**
-     * Initializes the Universal Sentence Encoder model.
-     */
     init(actions: any[]): Promise<void>;
     /**
      * Encodes a query using the model.
      */
     private encodeQuery;
-    /**
-     * @return A tensor of shape [512].
-     */
     handleQuery(query: string): Promise<tf.Tensor1D>;
 }

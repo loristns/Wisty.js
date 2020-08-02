@@ -1,6 +1,9 @@
 import * as tf from '@tensorflow/tfjs';
 import { Featurizer } from '../featurizers';
 import { Story, Metrics } from '../utils';
+/**
+ * @callback
+ */
 declare type TrainingCallback = (metrics: Metrics) => void;
 /**
  * Parameters for HCN constructor.
@@ -77,7 +80,8 @@ export declare class HCN {
     private lstmDropout;
     /**
      * Defines the model.
-     * To fully initialize the model, run the async init() method.
+     *
+     * To fully initialize the model, run the async *init()* method.
      */
     constructor({ actions, featurizers, hiddenSize, optimizer, temperature, dropout }: HCNConstructorArgs);
     /**
@@ -126,6 +130,7 @@ export declare class HCN {
     }>;
     /**
      * Evaluate the model using stories.
+     *
      * @param stories Validation stories to evaluate the model.
      * @returns Validation metrics based on the results from the stories.
      */

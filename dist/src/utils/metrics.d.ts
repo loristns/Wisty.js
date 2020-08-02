@@ -1,3 +1,6 @@
+/**
+ * Some metrics about how a model is performing during training or at validation.
+ */
 export interface Metrics {
     /**
      * Epoch of the training.
