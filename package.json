@@ -12,7 +12,7 @@
     "scripts": {
         "build": "microbundle",
         "dev": "microbundle watch",
-        "build-doc": "npx typedoc --name Wisty.js --readme docs/src/readme.md --exclude \"**/node_modules/**\" --theme minimal --out docs/dist src"
+        "build-doc": "npx typedoc --name Wisty.js --readme api-reference.md --exclude \"**/node_modules/**\" --theme minimal --out docs src"
     },
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^2.25.0",
