@@ -80,6 +80,7 @@ export class CategoricalSlot extends Slot<CategoricalValue> {
     }
 
     async handleQuery(query: string): Promise<tf.Tensor1D> {
+        const previousValue = this.getValue();
         let bestValue: CategoricalValue = { category: undefined, extract: undefined, score: 0 };
 
         // For each category...
@@ -95,9 +96,19 @@ export class CategoricalSlot extends Slot<CategoricalValue> {
                     { extract: undefined, score: 0 }
                 );
 
-            // Check if this match is the best of every categories.
-            if (match.score > bestValue.score) {
-                bestValue = { category, ...match };
+            // The best match is preferably a match of a different category with the highest score.
+            if (match.extract !== undefined) {
+                const currentUneqPrevious = category !== previousValue.category;
+                const bestEqPrevious = bestValue.category === previousValue.category;
+                const betterScore = match.score > bestValue.score;
+
+                if (bestValue.category === undefined
+                    || (currentUneqPrevious && betterScore)
+                    || (bestEqPrevious && currentUneqPrevious)
+                    || (bestEqPrevious && betterScore)
+                ) {
+                    bestValue = { category, ...match };
+                }
             }
         });
 
