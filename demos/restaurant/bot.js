@@ -4,10 +4,12 @@ const use = new wisty.featurizers.USE();
 
 const bow = new wisty.featurizers.BOW(100);
 
-const fasttext = new wisty.featurizers.WordEmbedding(
-    async () => fetch('../passwords/fasttext_light_en_30.json').then((response) => response.text()),
+const fasttextEmbeddings = new wisty.tools.KeyedVectors(
+    async () => await fetch('../passwords/fasttext_light_en_30.json').then((response) => response.text()),
     30
 );
+
+const fasttext = new wisty.featurizers.WordEmbedding(fasttextEmbeddings);
 
 const starterSlot = new ProductSlot({
     name: 'starter',

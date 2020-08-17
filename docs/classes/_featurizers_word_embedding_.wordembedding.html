@@ -2734,9 +2734,6 @@ img {
 				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
 					<a href="_featurizers_word_embedding_.wordembedding.html#id" class="tsd-kind-icon">id</a>
 				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a href="_featurizers_word_embedding_.wordembedding.html#loaderfunction" class="tsd-kind-icon">loader<wbr>Function</a>
-				</li>
 				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
 					<a href="_featurizers_word_embedding_.wordembedding.html#size" class="tsd-kind-icon">size</a>
 				</li>
@@ -2812,7 +2809,6 @@ img {
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_featurizers_word_embedding_.wordembedding.html#actions" class="tsd-kind-icon">actions</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="_featurizers_word_embedding_.wordembedding.html#id" class="tsd-kind-icon">id</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_featurizers_word_embedding_.wordembedding.html#loaderfunction" class="tsd-kind-icon">loader<wbr>Function</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="_featurizers_word_embedding_.wordembedding.html#size" class="tsd-kind-icon">size</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_featurizers_word_embedding_.wordembedding.html#vectors" class="tsd-kind-icon">vectors</a></li>
 						</ul>
@@ -2839,13 +2835,13 @@ img {
 				<a name="constructor" class="tsd-anchor"></a>
 				<h3>constructor</h3>
 				<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">new <wbr>Word<wbr>Embedding<span class="tsd-signature-symbol">(</span>loaderFunction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span>, size<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_featurizers_word_embedding_.wordembedding.html" class="tsd-signature-type">WordEmbedding</a></li>
+					<li class="tsd-signature tsd-kind-icon">new <wbr>Word<wbr>Embedding<span class="tsd-signature-symbol">(</span>vectors<span class="tsd-signature-symbol">: </span><a href="_tools_keyed_vectors_.keyedvectors.html" class="tsd-signature-type">KeyedVectors</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_featurizers_word_embedding_.wordembedding.html" class="tsd-signature-type">WordEmbedding</a></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/09ac730/src/featurizers/word_embedding.ts#L18">featurizers/word_embedding.ts:18</a></li>
+								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/0453d6a/src/featurizers/word_embedding.ts#L17">featurizers/word_embedding.ts:17</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2853,30 +2849,10 @@ img {
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>loaderFunction: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>vectors: <a href="_tools_keyed_vectors_.keyedvectors.html" class="tsd-signature-type">KeyedVectors</a></h5>
 								<div class="tsd-comment tsd-typography">
 									<div class="lead">
-										<p>A function that returns the json string containing the embedding.</p>
-									</div>
-								</div>
-								<ul class="tsd-parameters">
-									<li class="tsd-parameter-signature">
-										<ul class="tsd-signatures tsd-kind-type-literal">
-											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
-										</ul>
-										<ul class="tsd-descriptions">
-											<li class="tsd-description">
-												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</li>
-							<li>
-								<h5>size: <span class="tsd-signature-type">number</span></h5>
-								<div class="tsd-comment tsd-typography">
-									<div class="lead">
-										<p>The dimension of the word embedding</p>
+										<p>The keyed vectors storing the embeddings.</p>
 									</div>
 								</div>
 							</li>
@@ -2895,7 +2871,7 @@ img {
 				<aside class="tsd-sources">
 					<p>Inherited from <a href="_featurizers_featurizer_.featurizer.html">Featurizer</a>.<a href="_featurizers_featurizer_.featurizer.html#actions">actions</a></p>
 					<ul>
-						<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/09ac730/src/featurizers/featurizer.ts#L19">featurizers/featurizer.ts:19</a></li>
+						<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/0453d6a/src/featurizers/featurizer.ts#L19">featurizers/featurizer.ts:19</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2911,34 +2887,9 @@ img {
 				<aside class="tsd-sources">
 					<p>Overrides <a href="_featurizers_featurizer_.featurizer.html">Featurizer</a>.<a href="_featurizers_featurizer_.featurizer.html#id">id</a></p>
 					<ul>
-						<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/09ac730/src/featurizers/word_embedding.ts#L14">featurizers/word_embedding.ts:14</a></li>
+						<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/0453d6a/src/featurizers/word_embedding.ts#L14">featurizers/word_embedding.ts:14</a></li>
 					</ul>
 				</aside>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-				<a name="loaderfunction" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagPrivate">Private</span> loader<wbr>Function</h3>
-				<div class="tsd-signature tsd-kind-icon">loader<wbr>Function<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/09ac730/src/featurizers/word_embedding.ts#L17">featurizers/word_embedding.ts:17</a></li>
-					</ul>
-				</aside>
-				<div class="tsd-type-declaration">
-					<h4>Type declaration</h4>
-					<ul class="tsd-parameters">
-						<li class="tsd-parameter-signature">
-							<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-property">
-								<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
-							</ul>
-							<ul class="tsd-descriptions">
-								<li class="tsd-description">
-									<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</div>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
 				<a name="size" class="tsd-anchor"></a>
@@ -2947,27 +2898,19 @@ img {
 				<aside class="tsd-sources">
 					<p>Overrides <a href="_featurizers_featurizer_.featurizer.html">Featurizer</a>.<a href="_featurizers_featurizer_.featurizer.html#size">size</a></p>
 					<ul>
-						<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/09ac730/src/featurizers/word_embedding.ts#L15">featurizers/word_embedding.ts:15</a></li>
+						<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/0453d6a/src/featurizers/word_embedding.ts#L15">featurizers/word_embedding.ts:15</a></li>
 					</ul>
 				</aside>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 				<a name="vectors" class="tsd-anchor"></a>
 				<h3><span class="tsd-flag ts-flagPrivate">Private</span> vectors</h3>
-				<div class="tsd-signature tsd-kind-icon">vectors<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{}</span></div>
+				<div class="tsd-signature tsd-kind-icon">vectors<span class="tsd-signature-symbol">:</span> <a href="_tools_keyed_vectors_.keyedvectors.html" class="tsd-signature-type">KeyedVectors</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/09ac730/src/featurizers/word_embedding.ts#L18">featurizers/word_embedding.ts:18</a></li>
+						<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/0453d6a/src/featurizers/word_embedding.ts#L17">featurizers/word_embedding.ts:17</a></li>
 					</ul>
 				</aside>
-				<div class="tsd-type-declaration">
-					<h4>Type declaration</h4>
-					<ul class="tsd-parameters">
-						<li class="tsd-parameter-index-signature">
-							<h5><span class="tsd-signature-symbol">[</span>word: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
-						</li>
-					</ul>
-				</div>
 			</section>
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
@@ -2983,7 +2926,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from <a href="_featurizers_featurizer_.featurizer.html">Featurizer</a>.<a href="_featurizers_featurizer_.featurizer.html#export">export</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/09ac730/src/featurizers/featurizer.ts#L102">featurizers/featurizer.ts:102</a></li>
+								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/0453d6a/src/featurizers/featurizer.ts#L102">featurizers/featurizer.ts:102</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3006,7 +2949,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from <a href="_featurizers_featurizer_.featurizer.html">Featurizer</a>.<a href="_featurizers_featurizer_.featurizer.html#getactionmask">getActionMask</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/09ac730/src/featurizers/featurizer.ts#L82">featurizers/featurizer.ts:82</a></li>
+								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/0453d6a/src/featurizers/featurizer.ts#L82">featurizers/featurizer.ts:82</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3031,7 +2974,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from <a href="_featurizers_featurizer_.featurizer.html">Featurizer</a>.<a href="_featurizers_featurizer_.featurizer.html#getoptimizablefeatures">getOptimizableFeatures</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/09ac730/src/featurizers/featurizer.ts#L62">featurizers/featurizer.ts:62</a></li>
+								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/0453d6a/src/featurizers/featurizer.ts#L62">featurizers/featurizer.ts:62</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3070,7 +3013,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from <a href="_featurizers_featurizer_.featurizer.html">Featurizer</a>.<a href="_featurizers_featurizer_.featurizer.html#handleaction">handleAction</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/09ac730/src/featurizers/featurizer.ts#L74">featurizers/featurizer.ts:74</a></li>
+								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/0453d6a/src/featurizers/featurizer.ts#L74">featurizers/featurizer.ts:74</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3099,7 +3042,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Overrides <a href="_featurizers_featurizer_.featurizer.html">Featurizer</a>.<a href="_featurizers_featurizer_.featurizer.html#handlequery">handleQuery</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/09ac730/src/featurizers/word_embedding.ts#L35">featurizers/word_embedding.ts:35</a></li>
+								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/0453d6a/src/featurizers/word_embedding.ts#L34">featurizers/word_embedding.ts:34</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3123,7 +3066,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Overrides <a href="_featurizers_featurizer_.featurizer.html">Featurizer</a>.<a href="_featurizers_featurizer_.featurizer.html#init">init</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/09ac730/src/featurizers/word_embedding.ts#L30">featurizers/word_embedding.ts:30</a></li>
+								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/0453d6a/src/featurizers/word_embedding.ts#L28">featurizers/word_embedding.ts:28</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3147,7 +3090,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from <a href="_featurizers_featurizer_.featurizer.html">Featurizer</a>.<a href="_featurizers_featurizer_.featurizer.html#load">load</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/09ac730/src/featurizers/featurizer.ts#L96">featurizers/featurizer.ts:96</a></li>
+								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/0453d6a/src/featurizers/featurizer.ts#L96">featurizers/featurizer.ts:96</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3176,7 +3119,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from <a href="_featurizers_featurizer_.featurizer.html">Featurizer</a>.<a href="_featurizers_featurizer_.featurizer.html#resetdialog">resetDialog</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/09ac730/src/featurizers/featurizer.ts#L90">featurizers/featurizer.ts:90</a></li>
+								<li>Defined in <a href="https://github.com/the-new-sky/Wisty.js/blob/0453d6a/src/featurizers/featurizer.ts#L90">featurizers/featurizer.ts:90</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">

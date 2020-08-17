@@ -108,10 +108,13 @@
         // const use = new wisty.featurizers.USE();
 
         const bow = new wisty.featurizers.BOW(100);
-        const fasttext = new wisty.featurizers.WordEmbedding(
+
+        const fasttextEmbeddings = new wisty.tools.KeyedVectors(
             async () => await fetch('./fasttext_light_en_30.json').then((response) => response.text()),
             30
         );
+
+        const fasttext = new wisty.featurizers.WordEmbedding(fasttextEmbeddings);
 
         const ai = new wisty.models.HCN({
             actions: ['introduce', 'sayHello', 'askForDetails', 'solved', 'sayGoodbye', 'checkSpell', 'resetPassword', 'retryReset', 'callSupport', 'LUS'],

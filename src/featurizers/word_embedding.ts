@@ -1,6 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import { Featurizer } from './featurizer';
-import { levenshteinDistance } from '../utils';
+import { KeyedVectors } from '../tools';
 
 /**
  * Featurize queries by pooling words embedding using SWEM-concat(*).
@@ -14,22 +14,21 @@ export class WordEmbedding extends Featurizer {
     readonly id = 'Word Embedding';
     readonly size: number;
 
-    private loaderFunction: () => Promise<string>;
-    private vectors: {[word: string]: number[]};
+    private vectors: KeyedVectors;
 
     /**
-     * @param loaderFunction A function that returns the json string containing the embedding.
-     * @param size The dimension of the word embedding
+     * @param vectors The keyed vectors storing the embeddings.
      */
-    constructor(loaderFunction: () => Promise<string>, size: number) {
+    constructor(vectors: KeyedVectors) {
         super();
-        this.size = 2 * size;
-        this.loaderFunction = loaderFunction;
+        this.size = 2 * vectors.size;
+        this.vectors = vectors;
     }
 
     async init(actions: any[]) {
         await super.init(actions);
-        this.vectors = JSON.parse(await this.loaderFunction());
+
+        if (!this.vectors.isLoaded()) await this.vectors.load();
     }
 
     async handleQuery(query: string): Promise<tf.Tensor1D> {
@@ -40,30 +39,8 @@ export class WordEmbedding extends Featurizer {
 
             const embeddings: tf.Tensor1D[] = [];
 
-            tokens.forEach((token) => {
-                // If the token in in the vocabulary, just use its embedding.
-                if (Object.keys(this.vectors).includes(token)) {
-                    embeddings.push(tf.tensor(this.vectors[token]));
-
-                // If the token is out of vocabulary, use the most similarly spelled token instead.
-                } else {
-                    let bestToken: string;
-                    let lowestDistance: number = Infinity;
-
-                    Object.keys(this.vectors).forEach((vocabToken) => {
-                        const distance = levenshteinDistance(vocabToken, token);
-
-                        if (distance < lowestDistance) {
-                            bestToken = vocabToken;
-                            lowestDistance = distance;
-                        }
-                    });
-
-                    if (lowestDistance < 0.5) {
-                        embeddings.push(tf.tensor(this.vectors[bestToken]));
-                    }
-                }
-            });
+            tokens.forEach((token) => embeddings.push(this.vectors.get(token)));
+            embeddings.filter((v) => v !== undefined);
 
             // When there is no embeddable tokens, return a zeros vector.
             if (embeddings.length === 0) {

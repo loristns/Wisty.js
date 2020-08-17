@@ -1,5 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import { Featurizer } from './featurizer';
+import { KeyedVectors } from '../tools';
 /**
  * Featurize queries by pooling words embedding using SWEM-concat(*).
  *
@@ -11,13 +12,11 @@ import { Featurizer } from './featurizer';
 export declare class WordEmbedding extends Featurizer {
     readonly id = "Word Embedding";
     readonly size: number;
-    private loaderFunction;
     private vectors;
     /**
-     * @param loaderFunction A function that returns the json string containing the embedding.
-     * @param size The dimension of the word embedding
+     * @param vectors The keyed vectors storing the embeddings.
      */
-    constructor(loaderFunction: () => Promise<string>, size: number);
+    constructor(vectors: KeyedVectors);
     init(actions: any[]): Promise<void>;
     handleQuery(query: string): Promise<tf.Tensor1D>;
 }
