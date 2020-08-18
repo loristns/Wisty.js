@@ -13,7 +13,7 @@
         "build": "microbundle",
         "dev": "microbundle watch",
         "test": "mocha -r ts-node/register tests/**/*.ts",
-        "build-doc": "npx typedoc --name Wisty.js --readme api-reference.md --exclude \"**/node_modules/**\" --out docs src"
+        "build-doc": "npx typedoc --name Wisty.js --readme api-reference.md --exclude \"**/node_modules/**\" --theme minimal --out docs src"
     },
     "devDependencies": {
         "@types/chai": "^4.2.12",
@@ -28,7 +28,6 @@
         "mocha": "^8.1.1",
         "ts-node": "^8.10.2",
         "typedoc": "^0.17.8",
-        "typedoc-plugin-markdown": "^2.4.1",
         "typescript": "^3.8.3"
     },
     "dependencies": {
