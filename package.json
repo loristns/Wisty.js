@@ -12,15 +12,17 @@
     "scripts": {
         "build": "microbundle",
         "dev": "microbundle watch",
-        "test": "mocha -r ts-node/register tests/**/*.ts",
-        "build-doc": "npx typedoc --name Wisty.js --readme api-reference.md --exclude \"**/node_modules/**\" --theme minimal --out docs src"
+        "test": "env TS_NODE_PROJECT=\"tests/tsconfig.test.json\" mocha -r ts-node/register tests/**/*.test.ts",
+        "build-doc": "typedoc --name Wisty.js --readme api-reference.md --exclude \"**/node_modules/**\" --theme minimal --out docs src && touch docs/.nojekyll"
     },
     "devDependencies": {
         "@types/chai": "^4.2.12",
+        "@types/chai-as-promised": "^7.1.3",
         "@types/mocha": "^8.0.3",
         "@typescript-eslint/eslint-plugin": "^2.25.0",
         "@typescript-eslint/parser": "^2.25.0",
         "chai": "^4.2.0",
+        "chai-as-promised": "^7.1.1",
         "eslint": "^6.8.0",
         "eslint-config-airbnb-base": "^14.1.0",
         "eslint-plugin-import": "^2.20.1",
