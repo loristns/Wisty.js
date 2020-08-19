@@ -29,7 +29,13 @@ export function parseStories(source: string): Story[] {
         */
         } else if (newInput != null) {
             // Add a LUS action to mark the end of the previous turn.
-            if (story.length > 0) story.push(<State> { query: '', action: 'LUS' });
+            if (story.length > 0) {
+                if (story[story.length - 1].action === undefined) {
+                    story[story.length - 1].action = 'LUS';
+                } else {
+                    story.push(<State> { query: '', action: 'LUS' });
+                }
+            }
 
             story.push(<State> { query: newInput[1], action: undefined });
             inputAnswered = false;
