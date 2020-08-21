@@ -44,12 +44,11 @@
 
     <script src="https://cdn.jsdelivr.net/vue/latest/vue.min.js"></script>
     <script src="https://unpkg.com/botui/build/botui.min.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <!--
         <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
     -->
-    <script src="../../dist/wisty.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/wisty@0.0.3/dist/index.umd.min.js"></script>
 
     <script>
         /**
@@ -105,12 +104,10 @@
         const passwordRules = new PasswordRules();
         const actionRules = new wisty.featurizers.ActionFeaturizer();
 
-        // const use = new wisty.featurizers.USE();
-
         const bow = new wisty.featurizers.BOW(100);
 
         const fasttextEmbeddings = new wisty.tools.KeyedVectors(
-            async () => await fetch('./fasttext_light_en_30.json').then((response) => response.text()),
+            async () => fetch('./fasttext_light_en_30.json').then((response) => response.text()),
             30
         );
 
