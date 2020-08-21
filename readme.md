@@ -51,7 +51,7 @@ You can also use CDNs :
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
 -->
 
-<script src="https://cdn.jsdelivr.net/npm/wisty@0.0.3/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/wisty@latest/dist/index.umd.min.js"></script>
 ```
 
 ## Demos
