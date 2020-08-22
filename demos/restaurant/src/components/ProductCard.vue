@@ -1,7 +1,7 @@
 <template>
     <article class="product-card">
         <img
-            :src="'/assets/product-images/' + product_name + '.jpg'"
+            :src="'./assets/product-images/' + product_name + '.jpg'"
             :alt="product_name"
         >
         <div>

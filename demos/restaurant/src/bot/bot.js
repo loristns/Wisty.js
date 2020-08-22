@@ -6,7 +6,7 @@ import { RestaurantFeaturizer } from './featurizers/restaurant-featurizer.ts';
 const bow = new wisty.featurizers.BOW(200);
 
 const embeddings = new wisty.tools.KeyedVectors(
-    async () => fetch('/fasttext_light_en_30.json').then((response) => response.text()),
+    async () => fetch('./fasttext_light_en_30.json').then((response) => response.text()),
     30
 );
 const fasttext = new wisty.featurizers.WordEmbedding(embeddings);
@@ -68,7 +68,7 @@ export const nlu = new wisty.tools.NLUFormatter({
 export async function train() {
     await bot.init();
 
-    const dataset = await fetch('/stories.md').then((response) => response.text());
+    const dataset = await fetch('./stories.md').then((response) => response.text());
     const stories = wisty.tools.parseStories(dataset);
 
     await bot.train({
@@ -83,7 +83,7 @@ export async function train() {
 export async function load() {
     await bot.init();
 
-    const model = await fetch('/model.json').then((response) => response.text());
+    const model = await fetch('./model.json').then((response) => response.text());
     bot.load(model);
 }
 

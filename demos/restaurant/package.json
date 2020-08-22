@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "vite --https",
-    "build": "vite build"
+    "build": "vite build --base=./"
   },
   "dependencies": {
     "@tensorflow/tfjs": "^2.3.0",
