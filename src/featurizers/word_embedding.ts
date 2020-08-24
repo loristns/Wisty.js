@@ -33,14 +33,10 @@ export class WordEmbedding extends Featurizer {
 
     async handleQuery(query: string): Promise<tf.Tensor1D> {
         return <tf.Tensor1D> tf.tidy(() => {
-            const tokens = query.toLowerCase() // Word embeddings are uncased.
-                .split(/\W/g) // Tokenize at each non-word character.
-                .filter((token) => token.length > 0);
-
-            const embeddings: tf.Tensor1D[] = [];
-
-            tokens.forEach((token) => embeddings.push(this.vectors.get(token)));
-            embeddings.filter((v) => v !== undefined);
+            const tokens = this.vectors.tokenize(query);
+            const embeddings = tokens
+                .map((token) => this.vectors.get(token))
+                .filter((v) => v !== undefined);
 
             // When there is no embeddable tokens, return a zeros vector.
             if (embeddings.length === 0) {

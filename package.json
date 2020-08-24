@@ -2,7 +2,7 @@
     "name": "wisty",
     "description": "✨💬 Conversational interfaces in the browser.",
     "homepage": "https://xtns.dev/wisty.html",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "license": "MIT",
     "author": {
         "name": "Loris Nezan",

@@ -5,10 +5,12 @@ import { RestaurantFeaturizer } from './featurizers/restaurant-featurizer.ts';
 // Define featurizers
 const bow = new wisty.featurizers.BOW(200);
 
-const embeddings = new wisty.tools.KeyedVectors(
-    async () => fetch('./fasttext_light_en_30.json').then((response) => response.text()),
-    30
-);
+const embeddings = new wisty.tools.KeyedVectors({
+    loaderFunction: async () => fetch('./fasttext_light_en_30.json').then(
+        (response) => response.text()
+    ),
+    size: 30
+});
 const fasttext = new wisty.featurizers.WordEmbedding(embeddings);
 
 // const use = new wisty.featurizers.USE();

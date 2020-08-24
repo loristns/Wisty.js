@@ -17,6 +17,10 @@
 
 - It reduces the amount of hardcoded logic you have to write : new features are just a few training dialogs away.
 
+### Status
+
+The project is in alpha : the API is unstable as new feature keeps being added.
+
 ## Installation
 
 You'll probably need to install TensorFlow.js along with Wisty.

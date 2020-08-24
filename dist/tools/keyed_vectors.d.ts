@@ -1,21 +1,30 @@
 import * as tf from '@tensorflow/tfjs';
 /**
+ * Parameters for KeyedVectors.
+ */
+interface KeyedVectorsArgs {
+    loaderFunction(): Promise<string>;
+    size: number;
+    tokenization?: 'word' | 'byte_pair';
+    cased?: boolean;
+    maxDistance?: number;
+    unknownKey?: string;
+}
+/**
  * A reusable class storing words embeddings for functions and class that needs it.
  */
 export declare class KeyedVectors {
-    private loaderFunction;
     private vectors;
+    private loaderFunction;
     readonly size: number;
+    private tokenization;
+    private cased;
     private maxDistance;
+    private unknownKey;
     /**
      * Build a KeyedVector.
-     *
-     * @param loaderFunction A function that returns the json string containing the embedding.
-     * @param size The dimension of the word embedding
-     * @param maxDistance The maximum leveinshtein distance accepted to associate
-     *                    a vector with a word out of vocabulary
      */
-    constructor(loaderFunction: () => Promise<string>, size: number, maxDistance?: number);
+    constructor({ loaderFunction, size, tokenization, cased, maxDistance, unknownKey }: KeyedVectorsArgs);
     /**
      * Load the word embeddings.
      */
@@ -32,7 +41,27 @@ export declare class KeyedVectors {
      * Return the vector associated with a key.
      * If the key is not part of the vocabulary, it will use a similar key according to
      * the leveinshtein distance.
-     * If no similar keys are below `maxDistance`, it will return undefined.
+     * If no similar keys are below `maxDistance`, it will return the unknown key vector or
+     * undefined.
      */
     get(key: string): tf.Tensor1D;
+    /**
+     * Tokenize a string at each non-word character.
+     *
+     * @param text  A non tokenized text string.
+     */
+    private wordTokenize;
+    /**
+     * Tokenize a string based on the vocabulary.
+     *
+     * @param text A non tokenized text string.
+     */
+    private bytePairTokenize;
+    /**
+     * Tokenize a string based on the settings.
+     *
+     * @param text A raw text string.
+     */
+    tokenize(text: string): string[];
 }
+export {};
