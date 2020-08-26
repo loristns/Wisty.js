@@ -5,3 +5,4 @@ export { levenshteinDistance } from './levenshtein_distance';
 export { LSTM } from './lstm';
 export { Metrics } from './metrics';
 export { State, Story } from './state';
+export { Trie } from './trie';

@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
-import { levenshteinDistance } from '../utils';
+import { levenshteinDistance, Trie } from '../utils';
 
 /**
  * Parameters for KeyedVectors.
@@ -24,6 +24,7 @@ export class KeyedVectors {
     readonly size: number;
     private tokenization: 'word' | 'byte_pair';
     private cased: boolean;
+    private trie: Trie;
 
     private maxDistance: number;
     private unknownKey: string;
@@ -54,10 +55,22 @@ export class KeyedVectors {
     }
 
     /**
+     * Return every keys stored as an array.
+     */
+    keys(): string[] {
+        return Object.keys(this.vectors);
+    }
+
+    /**
      * Load the word embeddings.
      */
     async load() {
         this.vectors = JSON.parse(await this.loaderFunction());
+
+        if (this.tokenization === 'byte_pair') {
+            this.trie = new Trie();
+            this.keys().forEach((key) => this.trie.add(key));
+        }
     }
 
     /**
@@ -65,13 +78,6 @@ export class KeyedVectors {
      */
     isLoaded(): boolean {
         return this.vectors !== undefined;
-    }
-
-    /**
-     * Return every keys stored as an array.
-     */
-    keys(): string[] {
-        return Object.keys(this.vectors);
     }
 
     /**
@@ -128,46 +134,9 @@ export class KeyedVectors {
      * @param text A non tokenized text string.
      */
     private bytePairTokenize(text: string): string[] {
-        const toktext = ` ${text}`.split(' ').join('▁');
-        const maxLength = this.keys().reduce((acc, curr) => acc + curr.length, 0);
+        const pretext = ` ${text}`.split(' ').join('▁');
 
-        const tokens = [];
-        let startPos = 0;
-        let endPos = maxLength;
-
-        while (startPos < maxLength) {
-            const token = toktext.substring(startPos, endPos);
-
-            // Simplest case : the actual token is in the vocabulary.
-            if (this.keys().includes(token)) {
-                tokens.push(token); // Add the token
-
-                // Skip the added token and start over.
-                startPos = endPos;
-                endPos = startPos + maxLength;
-
-            // No tokens were found in the vocabulary starting with the character at startPos.
-            } else if (token === '') {
-                // Add an unknown token except if the previous token is also an unknown token.
-                if (tokens[tokens.length - 1] !== this.unknownKey) tokens.push(this.unknownKey);
-
-                // Start over, at the next character.
-                startPos += 1;
-                endPos = startPos + maxLength;
-
-            // The token is a space.
-            } else if (token === '▁') {
-                // Skip the space and start over.
-                startPos += 1;
-                endPos = startPos + maxLength;
-
-            // Else, we just try removing a character at the end.
-            } else {
-                endPos -= 1;
-            }
-        }
-
-        return tokens;
+        return this.trie.split(pretext, this.unknownKey, ['▁']);
     }
 
     /**

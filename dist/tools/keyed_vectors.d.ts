@@ -19,12 +19,17 @@ export declare class KeyedVectors {
     readonly size: number;
     private tokenization;
     private cased;
+    private trie;
     private maxDistance;
     private unknownKey;
     /**
      * Build a KeyedVector.
      */
     constructor({ loaderFunction, size, tokenization, cased, maxDistance, unknownKey }: KeyedVectorsArgs);
+    /**
+     * Return every keys stored as an array.
+     */
+    keys(): string[];
     /**
      * Load the word embeddings.
      */
@@ -33,10 +38,6 @@ export declare class KeyedVectors {
      * Check if the word embeddings were loaded.
      */
     isLoaded(): boolean;
-    /**
-     * Return every keys stored as an array.
-     */
-    keys(): string[];
     /**
      * Return the vector associated with a key.
      * If the key is not part of the vocabulary, it will use a similar key according to
