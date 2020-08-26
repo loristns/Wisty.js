@@ -1379,3 +1379,77 @@ Voice recognition fail
 > none
 - noDessert
 - finalise
+
+## 59 User Testing
+
+> hey
+- giveMenu
+
+> i will take eggs and a salad
+- orderStarter
+- askMain
+
+> can i have the eggs instead of the salad please
+- orderStarter
+- askMain
+
+> i'll take an omelet because I love eggs
+- orderMain
+- askDessert
+
+> it's muffin time
+- orderDessert
+- finalise
+
+> thank you
+
+## 60 User Testing
+
+Very uncooperative user wanting products not offered on the menu just to annoy the bot ;)
+
+> i want kebab
+- unknown
+- giveMenu
+
+> i want a kebab anyway
+- unknown
+
+> a kebab !!
+- unknown
+- askStarter
+
+> no
+- noStarter
+- askMain
+
+> A pizza
+- orderMain
+- askDessert
+
+> a sundae
+- askMorePoints
+
+> No, i go for the muffin then
+- orderDessert
+- finalise
+
+> but i wanted a kebab
+- unknown
+- finalise
+
+> finally I DON'T WANT PIZZA
+- removeMain
+- askMain
+
+> yes
+- askMain
+
+> kebab!
+- unknown
+- askMain
+
+> pizza
+- orderMain
+- finalise
+
+> FINE

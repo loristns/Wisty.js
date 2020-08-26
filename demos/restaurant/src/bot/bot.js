@@ -5,13 +5,17 @@ import { RestaurantFeaturizer } from './featurizers/restaurant-featurizer.ts';
 // Define featurizers
 const bow = new wisty.featurizers.BOW(200);
 
-const embeddings = new wisty.tools.KeyedVectors({
-    loaderFunction: async () => fetch('./fasttext_light_en_30.json').then(
+const keyedVectors = new wisty.tools.KeyedVectors({
+    loaderFunction: async () => fetch('./en.wiki.bpe.vs10000.d25.w2v.json').then(
         (response) => response.text()
     ),
-    size: 30
+    size: 25,
+    tokenization: 'byte_pair',
+    maxDistance: 0,
+    unknownKey: '<unk>'
 });
-const fasttext = new wisty.featurizers.WordEmbedding(embeddings);
+
+const wordEmbeddings = new wisty.featurizers.WordEmbedding(keyedVectors);
 
 // const use = new wisty.featurizers.USE();
 
@@ -57,7 +61,9 @@ const bot = new wisty.models.HCN({
         'removeMain', 'removeDessert', 'unknown', 'askMorePoints', 'morePoints',
         'finalise', 'LUS'
     ],
-    featurizers: [bow, fasttext, starterSlot, mainSlot, dessertSlot, actionRules, restaurantRules],
+    featurizers: [
+        bow, wordEmbeddings, starterSlot, mainSlot, dessertSlot, actionRules, restaurantRules
+    ],
     hiddenSize: 24,
     temperature: 2
 });

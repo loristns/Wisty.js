@@ -55,8 +55,10 @@ You can also use CDNs :
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
 -->
 
-<script src="https://cdn.jsdelivr.net/npm/wisty@latest/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/wisty@0.0.6/dist/index.umd.min.js"></script>
 ```
+
+As the API is currently unstable, it is recommended to use a fixed version.
 
 ## Demos
 
