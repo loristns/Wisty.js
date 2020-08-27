@@ -3,6 +3,9 @@
  * https://gist.github.com/tpae/72e1c54471e88b689f85ad2b3940a8f0
  */
 
+/**
+ * A node holding a character and having a parent node and several children.
+ */
 export class TrieNode {
     readonly parent: TrieNode;
     readonly key: string;
@@ -26,6 +29,9 @@ export class TrieNode {
     }
 }
 
+/**
+ * A trie data structure.
+ */
 export class Trie {
     root: TrieNode;
 
@@ -33,6 +39,9 @@ export class Trie {
         this.root = new TrieNode('', null);
     }
 
+    /**
+     * Add a word to the trie.
+     */
     add(word: string) {
         let actualNode = this.root;
 
@@ -49,6 +58,13 @@ export class Trie {
         }
     }
 
+    /**
+     * Split a text into a sequence of words based on the trie vocabulary.
+     *
+     * @param text A text to split into words
+     * @param unknownKey The word used when the word is not found in the trie
+     * @param ignoreTokens Words, not in the trie, to not replace by the unknown key.
+     */
     split(text: string, unknownKey: string = undefined, ignoreTokens: string[] = []): string[] {
         const splittedText = [];
 
