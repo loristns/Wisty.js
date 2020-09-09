@@ -1,3 +1,4 @@
+export { ExtractedValue } from './extracted_value';
 export { fuzzyMatch } from './fuzzy_match';
 export { hashcode } from './hashcode';
 export { initializeVariable } from './initialize_variable';
