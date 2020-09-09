@@ -34,7 +34,7 @@
     "scripts": {
         "build": "microbundle",
         "dev": "microbundle watch",
-        "test": "env TS_NODE_PROJECT=\"tests/tsconfig.test.json\" mocha -r ts-node/register tests/**/*.test.ts",
+        "test": "env TS_NODE_PROJECT=\"tsconfig.test.json\" mocha -r ts-node/register tests/**/*.test.ts",
         "build-doc": "typedoc --name Wisty.js --readme assets/api-reference.md --exclude \"**/node_modules/**\" --theme minimal --out docs src && touch docs/.nojekyll"
     },
     "devDependencies": {

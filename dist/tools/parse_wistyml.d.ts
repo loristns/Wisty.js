@@ -1,8 +1,6 @@
-import { Story, ExtractedValue } from '../utils';
+import { Stories, ExtractedValue } from '../utils';
 export interface ParsedWistyML {
-    stories: {
-        [title: string]: Story;
-    };
+    stories: Stories;
     extractedValues: {
         [title: string]: ExtractedValue[];
     };

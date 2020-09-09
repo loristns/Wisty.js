@@ -1,6 +1,11 @@
 import * as tf from '@tensorflow/tfjs';
 import { Featurizer } from '../featurizers';
-import { LSTM, Story, Metrics } from '../utils';
+import {
+    LSTM,
+    Story,
+    Stories,
+    Metrics
+} from '../utils';
 
 interface SampleData {
     targets: tf.Tensor1D,
@@ -62,7 +67,7 @@ interface HCNTrainArgs {
     /**
      * Training stories to learn from.
      */
-    stories: Story[];
+    stories: Stories;
 
     /**
      * Number of times the model will be passed the whole set of training stories during training.
@@ -283,6 +288,7 @@ export class HCN {
      * @returns Metrics collected from the last epoch (that correspond to the trained model).
      */
     async train({ stories, nEpochs = 12, onEpochEnd = undefined }: HCNTrainArgs): Promise<Metrics> {
+        const storiesEntries = Object.entries(stories);
         let epochMetrics: Metrics;
 
         // For each epoch...
@@ -290,20 +296,22 @@ export class HCN {
             const allTargets: tf.Tensor1D[] = [];
             const allPredictions: tf.Tensor1D[] = [];
             const allLosses: number[] = [];
-            const failingSamples: number[] = [];
+            const failingSamples: string[] = [];
 
             // For each training story...
-            for (let storyIdx = 0; storyIdx < stories.length; storyIdx += 1) {
+            for (let storyIdx = 0; storyIdx < storiesEntries.length; storyIdx += 1) {
+                const [storyTitle, story] = storiesEntries[storyIdx];
+
                 // (Each story must be fitted sequentially)
                 // eslint-disable-next-line no-await-in-loop
-                const storyData = await this.fitStory(stories[storyIdx]);
+                const storyData = await this.fitStory(story);
 
                 allTargets.push(storyData.targets);
                 allPredictions.push(storyData.predictions);
                 allLosses.push(storyData.loss);
 
                 if (storyData.isFailing) {
-                    failingSamples.push(storyIdx);
+                    failingSamples.push(storyTitle);
                 }
             }
 
@@ -395,18 +403,21 @@ export class HCN {
      * @param stories Validation stories to evaluate the model.
      * @returns Validation metrics based on the results from the stories.
      */
-    async score(stories: Story[]): Promise<Metrics> {
+    async score(stories: Stories): Promise<Metrics> {
+        const storiesEntries = Object.entries(stories);
+
         const targets: number[] = [];
         const predictions: number[] = [];
         const confidences: number[] = [];
-        const failingSamples: number[] = [];
+        const failingSamples: string[] = [];
 
         // For each stories and states, make predictions.
-        for (let storyIdx = 0; storyIdx < stories.length; storyIdx += 1) {
+        for (let storyIdx = 0; storyIdx < storiesEntries.length; storyIdx += 1) {
+            const [storyTitle, story] = storiesEntries[storyIdx];
             this.resetDialog();
 
-            for (let stateIdx = 0; stateIdx < stories[storyIdx].length; stateIdx += 1) {
-                const state = stories[storyIdx][stateIdx];
+            for (let stateIdx = 0; stateIdx < story.length; stateIdx += 1) {
+                const state = story[stateIdx];
 
                 // eslint-disable-next-line no-await-in-loop
                 const { action, confidence } = await this.predict(state.query);
@@ -415,8 +426,8 @@ export class HCN {
                 predictions.push(this.actions.indexOf(action));
                 confidences.push(confidence);
 
-                if (action !== state.action && !failingSamples.includes(storyIdx)) {
-                    failingSamples.push(storyIdx);
+                if (action !== state.action && !failingSamples.includes(storyTitle)) {
+                    failingSamples.push(storyTitle);
                 }
             }
         }

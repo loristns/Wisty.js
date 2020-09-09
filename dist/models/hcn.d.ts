@@ -1,6 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import { Featurizer } from '../featurizers';
-import { Story, Metrics } from '../utils';
+import { Stories, Metrics } from '../utils';
 /**
  * @callback
  */
@@ -47,7 +47,7 @@ interface HCNTrainArgs {
     /**
      * Training stories to learn from.
      */
-    stories: Story[];
+    stories: Stories;
     /**
      * Number of times the model will be passed the whole set of training stories during training.
      * Default is set to 12 epochs.
@@ -134,7 +134,7 @@ export declare class HCN {
      * @param stories Validation stories to evaluate the model.
      * @returns Validation metrics based on the results from the stories.
      */
-    score(stories: Story[]): Promise<Metrics>;
+    score(stories: Stories): Promise<Metrics>;
     /**
      * Load the models parameters from a JSON formatted string.
      */

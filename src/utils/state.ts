@@ -13,3 +13,8 @@ export interface State {
  * A whole conversation (array of states).
  */
 export type Story = State[];
+
+/**
+ * An ensemble of conversations
+ */
+export type Stories = {[title: string]: Story};

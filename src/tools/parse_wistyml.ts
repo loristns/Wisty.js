@@ -1,8 +1,8 @@
 import * as commonmark from 'commonmark';
-import { Story, State, ExtractedValue } from '../utils';
+import { Stories, State, ExtractedValue } from '../utils';
 
 export interface ParsedWistyML {
-    stories: {[title: string]: Story},
+    stories: Stories,
     extractedValues: {[title: string]: ExtractedValue[]}
 }
 

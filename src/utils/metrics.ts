@@ -48,7 +48,7 @@ export interface Metrics {
     averageConfidence?: number;
 
     /**
-     * The array of the indexes of failling samples (< 0.999 accuracy).
+     * The array of names of the failling samples (under 0.999 accuracy).
      */
-    failingSamples: number[];
+    failingSamples: string[];
 }
