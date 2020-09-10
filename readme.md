@@ -23,10 +23,8 @@ The project is in alpha : the API is unstable as new feature keeps being added.
 
 ## Installation
 
-You'll probably need to install TensorFlow.js along with Wisty.
-
 ```bash
-$ npm install @tensorflow/tfjs wisty
+$ npm install wisty
 ```
 
 ```js
@@ -53,9 +51,13 @@ You can also use CDNs :
 <!--
     If you intend to use Universal Sentence Encoder model :
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
+
+    If you attend to parse WistyML Training files :
+    <script src="commonmark.min.js"></script>
+    (see https://github.com/commonmark/commonmark.js)
 -->
 
-<script src="https://cdn.jsdelivr.net/npm/wisty@0.0.6/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/wisty@0.0.7/dist/index.umd.min.js"></script>
 ```
 
 As the API is currently unstable, it is recommended to use a fixed version.
