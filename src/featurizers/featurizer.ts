@@ -44,7 +44,7 @@ export class Featurizer {
      * If this method doesn't return something, no features will be passed to the model.
      */
     // eslint-disable-next-line no-unused-vars, class-methods-use-this, no-empty-function
-    async handleQuery(query: string): Promise<any> {}
+    async handleQuery(query: string, data?: any): Promise<any> {}
 
     /**
      * Turn the data returned by handleQuery into an embedding vector.

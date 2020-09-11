@@ -37,7 +37,7 @@ export declare class Featurizer {
      * getOptimizableFeatures method to handle those data.
      * If this method doesn't return something, no features will be passed to the model.
      */
-    handleQuery(query: string): Promise<any>;
+    handleQuery(query: string, data?: any): Promise<any>;
     /**
      * Turn the data returned by handleQuery into an embedding vector.
      * This function is used to expose featurizer variables to the model optimizer for training.

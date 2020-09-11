@@ -158,9 +158,9 @@ export class HCN {
     /**
      * Get the data returned from every featurizer's handleQuery method.
      */
-    private async handleQuery(query: string): Promise<any[]> {
+    private async handleQuery(query: string, data?: any): Promise<any[]> {
         return Promise.all(
-            this.featurizers.map((featurizer) => featurizer.handleQuery(query))
+            this.featurizers.map((featurizer) => featurizer.handleQuery(query, data))
         );
     }
 
@@ -218,7 +218,7 @@ export class HCN {
 
             // The query must be featurized before moving to the next state.
             // eslint-disable-next-line no-await-in-loop
-            inputs.push(await this.handleQuery(state.query));
+            inputs.push(await this.handleQuery(state.query, state.data));
 
             masks.push(this.getActionMask());
 
