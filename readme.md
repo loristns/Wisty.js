@@ -57,7 +57,7 @@ You can also use CDNs :
     (see https://github.com/commonmark/commonmark.js)
 -->
 
-<script src="https://cdn.jsdelivr.net/npm/wisty@0.0.7/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/wisty@0.0.8/dist/index.umd.min.js"></script>
 ```
 
 As the API is currently unstable, it is recommended to use a fixed version.
@@ -67,7 +67,7 @@ As the API is currently unstable, it is recommended to use a fixed version.
 You can find open source demos of chatbots running with Wisty.js in [the demos folder](https://github.com/the-new-sky/Wisty.js/tree/main/demos).
 
 - **Passwords** : An assistant trying to help you identify yourself on a web site if you have troubles logging in.
-  - The implementation is quick and dirty javascript in the HTML and a customized style for [BotUI](https://github.com/botui/botui).
+  - The implementation is quick and dirty JavaScript in the HTML and a customized style for [BotUI](https://github.com/botui/botui).
 
 - **Restaurant** : A chatbot taking orders for a restaurant.
   - Implemented from scratch with Vue.js 3 and Vite.

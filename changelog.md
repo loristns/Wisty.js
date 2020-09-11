@@ -1,3 +1,16 @@
+## 0.0.8 (2020-09-11)
+
+### Features
+
+- Support of WistyML Data at training time
+
+### Dependencies
+
+- Updated TensorFlow.js to version 2.3.0
+- Updated Universal Sentence Encoder to version 1.3.2
+
+---
+
 ## 0.0.7 (2020-09-10)
 
 ### Features
