@@ -13,7 +13,9 @@ He can do the following actions :
 * retryReset
 * callSupport
 
-## Happy path
+## wisty.stories
+
+### Happy path
 
 > Hi, I cannot access to my account
 - sayHello
@@ -23,7 +25,7 @@ He can do the following actions :
 - solved
 - sayGoodbye
 
-## Alt happy path
+### Alt happy path
 
 > Hello, can't sign in i'm stuck on login page
 - sayHello
@@ -33,7 +35,7 @@ He can do the following actions :
 - solved
 - sayGoodbye
 
-## Alt happy path 2
+### Alt happy path 2
 In this path, the user don't know the purpose of the bot, he is confused at first
 
 > hello????
@@ -47,7 +49,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - solved
 - sayGoodbye
 
-## Reset needed path
+### Reset needed path
 
 > Can't sign into my email
 - sayHello
@@ -60,7 +62,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - solved
 - sayGoodbye
 
-## Alt reset need path
+### Alt reset need path
 
 > Good morning
 - sayHello
@@ -76,7 +78,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - solved
 - sayGoodbye
 
-## No problem path
+### No problem path
 
 > Hi
 - sayHello
@@ -85,7 +87,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 > Bye
 - sayGoodbye
 
-## Alt no problem path
+### Alt no problem path
 
 > Hey ???
 - sayHello
@@ -97,7 +99,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 > nothing
 - sayGoodbye
 
-## Reset failed once path
+### Reset failed once path
 
 > Hey, I can't sign in :/
 - sayHello
@@ -113,7 +115,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - solved
 - sayGoodbye
 
-## Alt reset failed once path
+### Alt reset failed once path
 
 > Good afternon
 - sayHello
@@ -132,7 +134,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - solved
 - sayGoodbye
 
-## Reset failed twice path
+### Reset failed twice path
 
 > Howdy, I lost my password
 - sayHello
@@ -145,7 +147,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - callSupport
 - sayGoodbye
 
-## Alt reset failed twice path
+### Alt reset failed twice path
 
 > Hello
 - sayHello
@@ -161,7 +163,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - callSupport
 - sayGoodbye
 
-## Alt reset failed twice path 2
+### Alt reset failed twice path 2
 
 > Good morning
 - sayHello
@@ -177,7 +179,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - callSupport
 - sayGoodbye
 
-## ♻
+### ♻
 
 > I CAN'T SIGN IN
 - sayHello
@@ -190,7 +192,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - solved
 - sayGoodbye
 
-## Alt ♻
+### Alt ♻
 
 > hey
 - sayHello
@@ -203,7 +205,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - solved
 - sayGoodbye
 
-## Really uncooperative path
+### Really uncooperative path
 
 > ???
 - sayHello
@@ -216,7 +218,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - callSupport
 - sayGoodbye
 
-## Test path 1
+### Test path 1
 
 > can you give my account's code
 - sayHello
@@ -229,7 +231,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - solved
 - sayGoodbye
 
-## Test path 2
+### Test path 2
 
 > I can't find my login
 - sayHello
@@ -242,7 +244,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - solved
 - sayGoodbye
 
-## Test path 3
+### Test path 3
 
 > Why it says me my password is incorrect ?
 - sayHello
@@ -258,7 +260,7 @@ In this path, the user don't know the purpose of the bot, he is confused at firs
 - callSupport
 - sayGoodbye
 
-## Test path 4
+### Test path 4
 The issue seems much more important than a password lost
 
 > My account is unknown what should I do ?
@@ -275,7 +277,7 @@ The issue seems much more important than a password lost
 - callSupport
 - sayGoodbye
 
-## Test path 5
+### Test path 5
 
 > hello !
 - sayHello
@@ -293,7 +295,7 @@ When the user is confused, the bot can call the support directly
 - callSupport
 - sayGoodbye
 
-## Test path 6
+### Test path 6
 
 > Hey
 - sayHello
@@ -312,7 +314,7 @@ When the user is confused, the bot can call the support directly
 - solved
 - sayGoodbye
 
-## Test path 7
+### Test path 7
 
 > can't connect to my account
 - sayHello
@@ -322,7 +324,7 @@ When the user is confused, the bot can call the support directly
 - solved
 - sayGoodbye
 
-## Test path 8
+### Test path 8
 
 > i forgot my password
 - sayHello
@@ -332,7 +334,7 @@ When the user is confused, the bot can call the support directly
 - solved
 - sayGoodbye
 
-## Test path 9
+### Test path 9
 
 > Hi, I lost my password
 - sayHello
@@ -345,7 +347,7 @@ When the user is confused, the bot can call the support directly
 - callSupport
 - sayGoodbye
 
-## Test path 10
+### Test path 10
 
 > hey can't sign in
 - sayHello
@@ -358,7 +360,7 @@ When the user is confused, the bot can call the support directly
 - solved
 - sayGoodbye
 
-## Test path 11
+### Test path 11
 
 > hola
 - sayHello
@@ -374,7 +376,7 @@ When the user is confused, the bot can call the support directly
 - callSupport
 - sayGoodbye
 
-## Test path 12
+### Test path 12
 
 > hey can't log in today
 - sayHello
@@ -384,7 +386,7 @@ When the user is confused, the bot can call the support directly
 - solved
 - sayGoodbye
 
-## Test path 13
+### Test path 13
 
 > can't get in
 - sayHello
@@ -400,7 +402,7 @@ When the user is confused, the bot can call the support directly
 - solved
 - sayGoodbye
 
-## Test path 14
+### Test path 14
 
 > my login doesn't work today
 - sayHello
@@ -413,7 +415,7 @@ When the user is confused, the bot can call the support directly
 - solved
 - sayGoodbye
 
-## Test path 15
+### Test path 15
 
 > Hi
 - sayHello
@@ -422,7 +424,7 @@ When the user is confused, the bot can call the support directly
 > I've got no troubles
 - sayGoodbye
 
-## Test path 16
+### Test path 16
 
 > Hi
 - sayHello
@@ -431,7 +433,7 @@ When the user is confused, the bot can call the support directly
 > I have no problem
 - sayGoodbye
 
-## Test path 17
+### Test path 17
 
 > hey
 - sayHello
@@ -440,7 +442,7 @@ When the user is confused, the bot can call the support directly
 > i'm fine
 - sayGoodbye
 
-## Test path 18
+### Test path 18
 
 > Good morning !
 - sayHello
@@ -456,7 +458,7 @@ When the user is confused, the bot can call the support directly
 - solved
 - sayGoodbye
 
-## Test path 18
+### Test path 18bis
 
 > Good morning !
 - sayHello
@@ -472,7 +474,7 @@ When the user is confused, the bot can call the support directly
 - solved
 - sayGoodbye
 
-## Test path 19
+### Test path 19
 
 > Hi i am not able to be logged in
 - sayHello
@@ -487,7 +489,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test path 20
+### Test path 20
 
 > can't get my password back in my memory
 - sayHello
@@ -497,7 +499,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test path 21
+### Test path 21
 
 > hi
 - sayHello
@@ -516,7 +518,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test path 22
+### Test path 22
 
 > hello
 - sayHello
@@ -532,7 +534,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test path 23
+### Test path 23
 
 > Good morning can you help ?
 - sayHello
@@ -554,7 +556,7 @@ The user has found the solution by itself, it don't want to go further
 - callSupport
 - sayGoodbye
 
-## Test path 24
+### Test path 24
 
 > hello
 - sayHello
@@ -570,7 +572,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test path 25
+### Test path 25
 
 > good afternoon
 - sayHello
@@ -586,7 +588,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test path 24
+### Test path 24bis
 
 > what
 - sayHello
@@ -598,7 +600,7 @@ The user has found the solution by itself, it don't want to go further
 > bye
 - sayGoodbye
 
-## Test path 25
+### Test path 25
 
 > hey
 - sayHello
@@ -617,7 +619,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test path 26
+### Test path 26
 
 > hey
 - sayHello
@@ -629,7 +631,7 @@ The user has found the solution by itself, it don't want to go further
 > no need bye
 - sayGoodbye
 
-## Test path 27
+### Test path 27
 
 > hello
 - sayHello
@@ -638,7 +640,7 @@ The user has found the solution by itself, it don't want to go further
 > have a nice day
 - sayGoodbye
 
-## Test path 28
+### Test path 28
 
 > hey
 - sayHello
@@ -650,7 +652,7 @@ The user has found the solution by itself, it don't want to go further
 > in nothing, in nothing
 - sayGoodbye
 
-## Test path 29
+### Test path 29
 
 > morning'
 - sayHello
@@ -663,7 +665,7 @@ The user has found the solution by itself, it don't want to go further
 - callSupport
 - sayGoodbye
 
-## Test path 30
+### Test path 30
 
 > Hello
 - sayHello
@@ -679,7 +681,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test path 31
+### Test path 31
 
 > how do you do ?
 - sayHello
@@ -688,7 +690,7 @@ The user has found the solution by itself, it don't want to go further
 > no problem
 - sayGoodbye
 
-## Test path 32
+### Test path 32
 
 > hey reset my password
 - sayHello
@@ -697,7 +699,7 @@ The user has found the solution by itself, it don't want to go further
 > cancel
 - sayGoodbye
 
-## Test path 33
+### Test path 33
 
 > hello
 - sayHello
@@ -713,7 +715,7 @@ The user has found the solution by itself, it don't want to go further
 - callSupport
 - sayGoodbye
 
-## Test path 34
+### Test path 34
 
 > hey
 - sayHello
@@ -726,7 +728,7 @@ The user has found the solution by itself, it don't want to go further
 - callSupport
 - sayGoodbye
 
-## Test path 35
+### Test path 35
 
 > good evening
 - sayHello
@@ -739,7 +741,7 @@ The user has found the solution by itself, it don't want to go further
 - callSupport
 - sayGoodbye
 
-## DA 1
+### DA 1
 
 > Hi, I can't get in, I'm stuck on the login page
 - sayHello
@@ -749,7 +751,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## DA 2
+### DA 2
 
 > I can't get into
 - sayHello
@@ -762,7 +764,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## DA 3
+### DA 3
 
 > Hi
 - sayHello
@@ -778,7 +780,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test set 1
+### Test set 1
 > hey
 - sayHello
 - introduce
@@ -789,7 +791,7 @@ The user has found the solution by itself, it don't want to go further
 > hum nothing
 - sayGoodbye
 
-## Test set 2
+### Test set 2
 > hey bro
 - sayHello
 - introduce
@@ -804,7 +806,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test set 3
+### Test set 3
 
 > hey
 - sayHello
@@ -817,7 +819,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test set 4
+### Test set 4
 
 > hey i lost my pass
 - sayHello
@@ -830,7 +832,7 @@ The user has found the solution by itself, it don't want to go further
 - callSupport
 - sayGoodbye
 
-## Test set 5
+### Test set 5
 
 > hello
 - sayHello
@@ -849,7 +851,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test set 6
+### Test set 6
 
 > hello
 - sayHello
@@ -868,7 +870,7 @@ The user has found the solution by itself, it don't want to go further
 - callSupport
 - sayGoodbye
 
-## Test set 7
+### Test set 7
 
 > hey
 - sayHello
@@ -880,7 +882,7 @@ The user has found the solution by itself, it don't want to go further
 > hummm bye
 - sayGoodbye
 
-## Test set 8
+### Test set 8
 
 > hey bro
 - sayHello
@@ -896,7 +898,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test set 9
+### Test set 9
 
 > hello
 - sayHello
@@ -912,7 +914,7 @@ The user has found the solution by itself, it don't want to go further
 - callSupport
 - sayGoodbye
 
-## Test set 10
+### Test set 10
 
 > good morning
 - sayHello
@@ -921,7 +923,7 @@ The user has found the solution by itself, it don't want to go further
 > goodbye
 - sayGoodbye
 
-## Test set 11
+### Test set 11
 
 > bonjour
 - sayHello
@@ -940,7 +942,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test set 12
+### Test set 12
 
 > hi can you help me please i have big troubles to log in
 - sayHello
@@ -956,7 +958,7 @@ The user has found the solution by itself, it don't want to go further
 - solved
 - sayGoodbye
 
-## Test set 13
+### Test set 13
 
 > i've lost my password
 - sayHello

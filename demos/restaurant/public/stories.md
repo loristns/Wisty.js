@@ -53,7 +53,9 @@ The bot takes orders and can use a set of commands :
 * finalise
 
 
-## Happy path dialog
+## wisty.stories
+
+### Happy path dialog
 
 A simple dialog starts like this :
 
@@ -82,7 +84,7 @@ A simple dialog starts like this :
 
 "So your command is #0039 with a salad, a pizza and a muffin for a total of 9$. Payment will take place at the reception desk when your number will be called."
 
-## 2
+### 2
 
 > what do you have ?
 - giveMenu
@@ -96,7 +98,7 @@ A simple dialog starts like this :
 - orderDessert
 - finalise
 
-## 3
+### 3
 
 > i'd like a quiche, a pizza and a muffin with chocolate
 - orderStarter
@@ -112,7 +114,7 @@ A simple dialog starts like this :
 - noStarter
 - finalise
 
-## 4
+### 4
 
 > hey what is your menu ?
 - giveMenu
@@ -129,7 +131,7 @@ A simple dialog starts like this :
 - orderDessert
 - finalise
 
-## 5
+### 5
 
 > a sundae
 - orderDessert
@@ -147,7 +149,7 @@ A simple dialog starts like this :
 - orderMain
 - finalise
 
-## 6
+### 6
 
 > hey
 - giveMenu
@@ -164,7 +166,7 @@ A simple dialog starts like this :
 - orderMain
 - finalise
 
-## 7
+### 7
 
 > i want a salad
 - orderStarter
@@ -178,7 +180,7 @@ A simple dialog starts like this :
 - noDessert
 - finalise
 
-## 8
+### 8
 
 > an omelet and a sundae
 - orderMain
@@ -196,7 +198,7 @@ A simple dialog starts like this :
 - orderStarter
 - finalise
 
-## 9
+### 9
 
 > could i take an ice cream
 - orderDessert
@@ -214,7 +216,7 @@ A simple dialog starts like this :
 - orderMain
 - finalise
 
-## 10
+### 10
 
 > good morning
 - giveMenu
@@ -235,7 +237,7 @@ A simple dialog starts like this :
 - noStarter
 - finalise
 
-## 11
+### 11
 
 > i'd take a salad and an ice-cream
 - orderStarter
@@ -255,7 +257,7 @@ A simple dialog starts like this :
 - orderMain
 - finalise
 
-## 12
+### 12
 
 > i want a salad
 - orderStarter
@@ -277,7 +279,7 @@ A simple dialog starts like this :
 - orderDessert
 - finalise
 
-## 13
+### 13
 
 > i will take some eggs
 - orderStarter
@@ -304,7 +306,7 @@ A simple dialog starts like this :
 - noStarter
 - finalise
 
-## 14
+### 14
 
 > hello
 - giveMenu
@@ -330,7 +332,7 @@ A simple dialog starts like this :
 - noStarter
 - finalise
 
-## 15
+### 15
 
 > hey
 - giveMenu
@@ -351,7 +353,7 @@ A simple dialog starts like this :
 - orderDessert
 - finalise
 
-## 16
+### 16
 
 > i want a muffin
 - orderDessert
@@ -373,7 +375,7 @@ A simple dialog starts like this :
 - orderStarter
 - finalise
 
-## 17
+### 17
 
 > can i have a muffin and an omelet
 - orderDessert
@@ -396,7 +398,7 @@ A simple dialog starts like this :
 - noDessert
 - finalise
 
-## 18
+### 18
 
 > i want lettuce and a sundae
 - orderStarter
@@ -422,7 +424,7 @@ A simple dialog starts like this :
 - noDessert
 - finalise
 
-## 19
+### 19
 
 > i'd take a pizza
 - orderMain
@@ -447,7 +449,7 @@ A simple dialog starts like this :
 > nothing else
 - finalise
 
-## 20
+### 20
 
 > I want a pie
 - unknown
@@ -465,7 +467,7 @@ A simple dialog starts like this :
 - noMain
 - finalise
 
-## 21
+### 21
 
 > hey
 - giveMenu
@@ -486,7 +488,7 @@ A simple dialog starts like this :
 - noDessert
 - finalise
 
-## 22
+### 22
 
 > i want a pizza
 - orderMain
@@ -506,7 +508,7 @@ A simple dialog starts like this :
 - morePoints
 - orderDessert
 
-## 23
+### 23
 
 > i will take a pizza, salad, and an apple
 - orderStarter
@@ -522,7 +524,7 @@ A simple dialog starts like this :
 - noDessert
 - finalise
 
-## 24 GIVE THE MENU
+### 24 GIVE THE MENU
 
 > Hey
 - giveMenu
@@ -552,7 +554,7 @@ A simple dialog starts like this :
 - noDessert
 - finalise
 
-## 25
+### 25
 
 > i want a tomatoe
 - unknown
@@ -580,7 +582,7 @@ A simple dialog starts like this :
 - noDessert
 - finalise
 
-## 26
+### 26
 
 > i want a salad
 - orderStarter
@@ -598,7 +600,7 @@ A simple dialog starts like this :
 - orderMain
 - finalise
 
-## 27
+### 27
 
 > hey i want a salad
 - orderStarter
@@ -624,7 +626,7 @@ Voice recognition fail
 - orderDessert
 - finalise
 
-## 28
+### 28
 
 > i want eggs and omelet
 - orderStarter
@@ -643,7 +645,7 @@ Voice recognition fail
 - orderDessert
 - finalise
 
-## 29
+### 29
 
 > order quiche and a muffin
 - orderStarter
@@ -665,7 +667,7 @@ Voice recognition fail
 - noMain
 - finalise
 
-## 30
+### 30
 
 > i want an omelet with some eggs and a muffin
 - orderStarter
@@ -673,7 +675,7 @@ Voice recognition fail
 - orderDessert
 - finalise
 
-## 31
+### 31
 
 > i want a quiche with a pizza and a sundae
 - orderStarter
@@ -685,7 +687,7 @@ Voice recognition fail
 - orderDessert
 - finalise
 
-## 32
+### 32
 
 > can you order a salad and a pizza
 - orderStarter
@@ -712,7 +714,7 @@ Voice recognition fail
 - orderDessert
 - finalise
 
-## 33
+### 33
 
 > i want a quiche
 - orderStarter
@@ -738,7 +740,7 @@ Voice recognition fail
 - noStarter
 - finalise
 
-## 34
+### 34
 
 > i want a pizza, a muffin and a salad
 - orderStarter
@@ -758,7 +760,7 @@ Voice recognition fail
 - orderDessert
 - finalise
 
-## 35
+### 35
 
 > i want a salad
 - orderStarter
@@ -780,7 +782,7 @@ Voice recognition fail
 - noDessert
 - finalise
 
-## 36
+### 36
 
 > i want : salad, omelet and no dessert
 - orderStarter
@@ -811,7 +813,7 @@ Voice recognition fail
 - noStarter
 - finalise
 
-## 37
+### 37
 
 > hey i want a sundae, a salad and an omelet
 - orderStarter
@@ -831,7 +833,7 @@ Voice recognition fail
 - orderMain
 - finalise
 
-## 38
+### 38
 
 > hello
 - giveMenu
@@ -858,7 +860,7 @@ Voice recognition fail
 - orderMain
 - finalise
 
-## 39 
+### 39 
 
 > i will take eggs, an omelet and a muffin
 - orderStarter
@@ -882,7 +884,7 @@ Voice recognition fail
 - noMain
 - finalise
 
-## 40
+### 40
 
 > hello i want a sundae
 - orderDessert
@@ -937,7 +939,7 @@ Voice recognition fail
 - orderMain
 - finalise
 
-## 41
+### 41
 
 > i'd like some lettuce, an omelet and a sundae
 - orderStarter
@@ -949,7 +951,7 @@ Voice recognition fail
 - orderDessert
 - finalise
 
-## 42
+### 42
 
 > hey what's on your menu
 - giveMenu
@@ -964,7 +966,7 @@ Voice recognition fail
 - orderDessert
 - finalise
 
-## 43
+### 43
 
 > i want a salad
 - orderStarter
@@ -978,7 +980,7 @@ Voice recognition fail
 - orderDessert
 - finalise
 
-## 44
+### 44
 
 > i want a bagel
 - unknown
@@ -1006,7 +1008,7 @@ Voice recognition fail
 - noDessert
 - finalise
 
-## 45
+### 45
 
 > hey
 - giveMenu
@@ -1029,7 +1031,7 @@ Voice recognition fail
 - orderDessert
 - finalise
 
-## 46
+### 46
 
 > i want a salad, some tomatoes and a muffin
 - orderStarter
@@ -1049,7 +1051,7 @@ Voice recognition fail
 - orderMain
 - finalise
 
-## 47
+### 47
 
 > howdy
 - giveMenu
@@ -1078,7 +1080,7 @@ Voice recognition fail
 - orderMain
 - finalise
 
-## 48
+### 48
 
 > hey i want a sundae on its caramel
 - orderDessert
@@ -1099,7 +1101,7 @@ Voice recognition fail
 - orderMain
 - finalise
 
-## 49
+### 49
 
 > hello, what is on your menu
 - giveMenu
@@ -1119,7 +1121,7 @@ Voice recognition fail
 - orderDessert
 - finalise
 
-## 50
+### 50
 
 > hey i want eggs and a neapolitan
 - orderStarter
@@ -1134,7 +1136,7 @@ Voice recognition fail
 - orderDessert
 - finalise
 
-## 51
+### 51
 
 > i will have a muffin and some boiled eggs
 - orderStarter
@@ -1150,7 +1152,7 @@ Voice recognition fail
 - orderMain
 - finalise
 
-## 52
+### 52
 
 > i do want some potatoes
 - unknown
@@ -1166,7 +1168,7 @@ Voice recognition fail
 - orderMain
 - finalise
 
-## 53
+### 53
 
 > hey bro
 - giveMenu
@@ -1192,7 +1194,7 @@ Voice recognition fail
 - noDessert
 - finalise
 
-## 54
+### 54
 
 > i want eggs and pizzas
 - orderStarter
@@ -1225,7 +1227,7 @@ Voice recognition fail
 - noStarter
 - finalise
 
-## 55
+### 55
 
 > hey awesome
 - giveMenu
@@ -1263,7 +1265,7 @@ Voice recognition fail
 - noStarter
 - finalise
 
-## 56
+### 56
 
 > i want a quiche, a pizza, and a sundae
 - orderStarter
@@ -1301,7 +1303,7 @@ Voice recognition fail
 - noStarter
 - finalise
 
-## 57
+### 57
 
 > hey i want a pizza
 - orderMain
@@ -1327,7 +1329,7 @@ Voice recognition fail
 - noMain
 - askDessert
 
-## 58
+### 58
 
 > wow i want an apple
 - unknown
@@ -1380,7 +1382,7 @@ Voice recognition fail
 - noDessert
 - finalise
 
-## 59 User Testing
+### 59 User Testing
 
 > hey
 - giveMenu
@@ -1403,7 +1405,7 @@ Voice recognition fail
 
 > thank you
 
-## 60 User Testing
+### 60 User Testing
 
 Very uncooperative user wanting products not offered on the menu just to annoy the bot ;)
 

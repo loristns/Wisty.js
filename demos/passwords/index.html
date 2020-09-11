@@ -48,7 +48,9 @@
         <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
     -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/wisty@0.0.6/dist/index.umd.min.js"></script>
+    <script src="commonmark.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/wisty@0.0.7/dist/index.umd.min.js"></script>
 
     <script>
         /**
@@ -187,8 +189,11 @@
             // Or train the model from scratch :
             const source = await fetch('./index.md').then((response) => response.text());
 
-            const stories = wisty.tools.parseStories(source);
-            const { train: trainStories, test: testStories } = wisty.tools.trainTestSplit(stories, 0.2);
+            const dataset = wisty.tools.parseWistyML(source);
+            const {
+                train: trainStories,
+                test: testStories
+            } = wisty.tools.trainTestSplit(dataset.stories, 0.2);
 
             await ai.train({
                 stories: trainStories,

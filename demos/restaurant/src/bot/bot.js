@@ -77,7 +77,7 @@ export async function train() {
     await bot.init();
 
     const dataset = await fetch('./stories.md').then((response) => response.text());
-    const stories = wisty.tools.parseStories(dataset);
+    const { stories } = wisty.tools.parseWistyML(dataset);
 
     await bot.train({
         stories,
