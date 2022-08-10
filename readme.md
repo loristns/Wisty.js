@@ -1,5 +1,5 @@
 <p align='center'>
-    <img src="https://github.com/the-new-sky/Wisty.js/raw/main/assets/logo-large.png" alt="Wisty" height="60"/>
+    <img src="https://github.com/loristns/Wisty.js/raw/main/assets/logo-large.png" alt="Wisty" height="60"/>
 </p>
 
 <h2 align='center'>
@@ -64,7 +64,7 @@ As the API is currently unstable, it is recommended to use a fixed version.
 
 ## Demos
 
-You can find open source demos of chatbots running with Wisty.js in [the demos folder](https://github.com/the-new-sky/Wisty.js/tree/main/demos).
+You can find open source demos of chatbots running with Wisty.js in [the demos folder](https://github.com/loristns/Wisty.js/tree/main/demos).
 
 - **Passwords** : An assistant trying to help you identify yourself on a web site if you have troubles logging in.
   - The implementation is quick and dirty JavaScript in the HTML and a customized style for [BotUI](https://github.com/botui/botui).
@@ -74,7 +74,7 @@ You can find open source demos of chatbots running with Wisty.js in [the demos f
 
 ## Documentation
 
-For the moment, only the API reference is available on [GitHub Pages](https://the-new-sky.github.io/Wisty.js/).
+For the moment, only the API reference is available on [GitHub Pages](https://loristns.github.io/Wisty.js/).
 
 ## License
 
